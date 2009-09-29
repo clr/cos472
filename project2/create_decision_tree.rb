@@ -102,16 +102,16 @@ class LeafNode
   def answer
     case @is_class
     when -1
-      'false'
+      'p'
     when 0
-      'maybe'
+      'unknown'
     when 1
-      'true'
+      'e'
     end
   end
 
   def print_tree( tab = 0 )
-    puts "#{ ' ' * tab }Decide #{ self.answer }."
+    puts "#{ ' ' * tab }Leaf: class is #{ self.answer }."
   end
 
 end
@@ -125,7 +125,7 @@ class DecisionNode
   end
 
   def print_tree( tab = 0 )
-    puts "#{ ' ' * tab }Split on attribute #{ @value.attribute } letter #{ @value.letter }."
+    puts "#{ ' ' * tab }Split on: attr #{ @value.attribute } value #{ @value.letter }."
     @left.print_tree( tab + 1 )
     @right.print_tree( tab + 1 )
   end

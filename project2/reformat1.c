@@ -56,6 +56,7 @@ typedef struct Decision * DecisionP; /* pointer to a Decision structure */
 struct Decision {
   int isLeaf; /* boolean 1 for leaf node, 0 for not */
   int isClass; /* -1 for no, 0 for maybe, 1 for yes */
+  int mushroomCount; /* keep track of how many pass through here */
   ValueP splitValue; /* pointer to the Value on which the decision splits */
   DecisionP left; /* pointer to positive matches */
   DecisionP right; /* pointer to negative matches */
@@ -67,15 +68,17 @@ MushroomP appendMushroom( MushroomP list, MushroomP newshroom );
 MushroomP newMushroom( int attributeCount );
 
 DecisionP createDecisionTree( char letter, int attribute, MushroomP shroomList, ValueP availableValues );
-DecisionP createLeafNode( int isClass );
-DecisionP createSplitNode( ValueP splitValue, char letter, int attribute, MushroomP positiveShrooms, MushroomP negativeShrooms, ValueP availableValues );
+DecisionP createLeafNode( int isClass, int mushroomCount );
+DecisionP createSplitNode( ValueP splitValue, char letter, int attribute, MushroomP positiveShrooms, MushroomP negativeShrooms, ValueP availableValues, int mushroomCount );
 DecisionP newDecision( );
-void printDecisionTree( DecisionP decisionTree, int tab );
+void printDecisionTree( DecisionP decisionTree );
+void printDecision( FILE * outfile, DecisionP decisionTree, int tab );
 
 ValueP findAvailableValues( MushroomP shroomList );
 ValueP newValue( char letter, int attribute );
 ValueP appendValue( ValueP list, ValueP newvalue );
 ValueP updateValue( ValueP list, char letter, int attribute );
+ValueP cloneValues( ValueP list );
 
 void *emalloc( long size );
 void openFile( FILE **fileptr, char *filename, char *mode );
@@ -116,7 +119,7 @@ int main(int argc, char* argv[]) {
 
   decisionTree = createDecisionTree( 'e', 0, shroomList, availableValues );
 
-  printDecisionTree( decisionTree, 0 );
+  printDecisionTree( decisionTree );
 
 	return (0); /* return a value */
 
@@ -260,15 +263,15 @@ DecisionP createDecisionTree( char letter, int attribute, MushroomP shroomList, 
   /* if we have nothing left to split on, then return a 'maybe' but we should 
    * probably never arrive here, correct? */
   if( !availableValues ){
-    return createLeafNode( 0 );
+    return createLeafNode( 0, shroomCount );
   }
   /* return a positive leaf node if all of the children have this class */
   if( edibleCount == shroomCount ){
-    return createLeafNode( 1 );
+    return createLeafNode( 1, shroomCount );
   }
   /* return a negative leaf node if none of the children have this class */
   if( edibleCount == 0 ){
-    return createLeafNode( -1 );
+    return createLeafNode( -1, shroomCount );
   }
 
   /* choose a value on which to split; for now, we just pick the next in the
@@ -277,17 +280,18 @@ DecisionP createDecisionTree( char letter, int attribute, MushroomP shroomList, 
   availableValues = splitValue->next;
   
   /* go through the mushroom list, and sort them into one list or the other */
-  shroomIterate = shroomList;
-  while( shroomIterate ){
-    if( shroomIterate->attributes[ splitValue->attribute ] == splitValue->letter ){
-      positiveShroomList = appendMushroom( positiveShroomList, shroomIterate );
+  while( shroomList ){
+    shroomIterate = shroomList->next;
+    shroomList->next = NULL;
+    if( shroomList->attributes[ splitValue->attribute ] == splitValue->letter ){
+      positiveShroomList = appendMushroom( positiveShroomList, shroomList );
     } else {
-      negativeShroomList = appendMushroom( negativeShroomList, shroomIterate );
+      negativeShroomList = appendMushroom( negativeShroomList, shroomList );
     }
-    shroomIterate = shroomIterate->next;
+    shroomList = shroomIterate;
   }
 
-  return createSplitNode( splitValue, letter, attribute, positiveShroomList, negativeShroomList, availableValues );
+  return createSplitNode( splitValue, letter, attribute, positiveShroomList, negativeShroomList, availableValues, shroomCount );
 } /* end createDecisionTree */
 
 
@@ -297,12 +301,13 @@ DecisionP createDecisionTree( char letter, int attribute, MushroomP shroomList, 
   @param {int} isClass whether or not this leaf indicates it is in the class
   @return {DecisionP} pointer to the leaf for attaching
  *****************************************************************************/
-DecisionP createLeafNode( int isClass ){
+DecisionP createLeafNode( int isClass, int mushroomCount ){
   DecisionP decision;
   decision = newDecision();
 
   decision->isLeaf = 1;
   decision->isClass = isClass;
+  decision->mushroomCount = mushroomCount;
 
   return decision;
 }
@@ -313,16 +318,15 @@ DecisionP createLeafNode( int isClass ){
   @param {ValueP, char, int, MushroomP, MushroomP, ValueP} splitValue, letter, attribute, positiveShrooms, negativeShrooms, availableValues
   @return {DecisionP} pointer to the split for attaching to the parent node
  *****************************************************************************/
-DecisionP createSplitNode( ValueP splitValue, char letter, int attribute, MushroomP positiveShrooms, MushroomP negativeShrooms, ValueP availableValues ){
+DecisionP createSplitNode( ValueP splitValue, char letter, int attribute, MushroomP positiveShrooms, MushroomP negativeShrooms, ValueP availableValues, int mushroomCount ){
   DecisionP decision;
   decision = newDecision();
 
   decision->isLeaf = 0;
   decision->splitValue = splitValue;
-  /* NEED TO CLONE availableValues HERE */
-  decision->left = createDecisionTree( letter, attribute, positiveShrooms, availableValues );
-  decision->right = createDecisionTree( letter, attribute, negativeShrooms, availableValues );
-  
+  decision->mushroomCount = mushroomCount;
+  decision->left = createDecisionTree( letter, attribute, positiveShrooms, cloneValues( availableValues ) );
+  decision->right = createDecisionTree( letter, attribute, negativeShrooms, cloneValues( availableValues ) );
   return decision;
 }
 
@@ -352,25 +356,22 @@ DecisionP newDecision() {
  @return {ValueP} list of values
  *****************************************************************************/
 ValueP findAvailableValues( MushroomP shroomList ){
-  MushroomP currentShroom;
-  currentShroom = shroomList;
   ValueP list;
   list = NULL;
   int i;
 
   /* for each mushroom, iterate through its attributes, and update the list of values for that attribute */
-  while( currentShroom ){
-    i = 0;
-    while( currentShroom->attributes[ i ] != 0 ){
-      list = updateValue( list, currentShroom->attributes[ i ], i );
+  while( shroomList != NULL ){
+    i = 1; /* we don't look at attribute 0, because that is the class we are trying to identify */
+    while( shroomList->attributes[ i ] != 0 ){
+      list = updateValue( list, shroomList->attributes[ i ], i );
       i++;
     }
-    currentShroom = currentShroom->next;
+    shroomList = shroomList->next;
   }
+
   return list;
-
 }
-
 /*****************************************************************************
  Allocates and initializes memory for new Value or fails with error message
  
@@ -434,7 +435,7 @@ ValueP updateValue( ValueP list, char letter, int attribute ){
   found = NULL;
 
   /* search the list first */
-  while( current ){
+  while( current && !found ){
     if( ( current->letter == letter ) && ( current->attribute == attribute ) ){
       found = current;
     }
@@ -447,6 +448,29 @@ ValueP updateValue( ValueP list, char letter, int attribute ){
   found->count = found->count++;
   return( list );
 } /* end findValue */
+
+
+/*****************************************************************************
+  Clone this linked list of values and return the new one.
+
+  @param { ValueP } list to the first Value in the list
+  @return { ValueP } new list of clones
+ *****************************************************************************/
+ValueP cloneValues( ValueP list ){
+  ValueP newList;  /* pointer to the currect value */
+  newList = NULL;
+  ValueP newNode;  /* pointer to the result, found or created */
+  newNode = NULL;
+
+  /* search the list first */
+  while( list ){
+    newNode = newValue( list->letter, list->attribute );
+    newNode->count = list->count;
+    newList = appendValue( newList, newNode );
+    list = list->next;
+  }
+  return newList;
+} /* end cloneValues */
 
 
 /*****************************************************************************
@@ -464,26 +488,51 @@ ValueP updateValue( ValueP list, char letter, int attribute ){
   @param {DecisionP, int} decisionTree, tab
   @return {} just print
  *****************************************************************************/
-void printDecisionTree( DecisionP decisionTree, int tab ){
-	int i;
+void printDecisionTree( DecisionP decisionTree ){
+  FILE *outfile;             /* output file (for results) */
+  ValueP values;             /* pointer to values for loop */
+  values = NULL;
+
+  /* prompt user and read filename */
+  if (strcmp(Outfilename, "none") == 0) {  /* file name has not been set */
+    printf("Please type the name of the output file: ");
+    scanf("%s", Outfilename);
+  }
+
+  /* open the output file for writing */
+  openFile(&outfile, Outfilename, "w");
+
+  printDecision( outfile, decisionTree, 0 );
+
+  fclose( outfile );
+} /* end printDecisionTree */
+
+/*****************************************************************************
+  Print the Decision nodes recursively.
+
+  @param {DecisionP, File}  decisionTree, outfile
+  @return void
+ *****************************************************************************/
+void printDecision( FILE * outfile, DecisionP decisionTree, int tab ) {
+  int i;
   for( i=0; i<tab; i++){
-    printf( "  " );
+    fprintf( outfile, " " );
   }
 
   if( decisionTree->isLeaf == 1 ){
-    printf( "Leaf: class is ");
+    fprintf( outfile, "Leaf: class is ");
     if( decisionTree->isClass == 1 ){
-      printf( "e\n" );
+      fprintf( outfile, "e   count %d\n", decisionTree->mushroomCount );
     } else {
-      printf( "p\n" );
+      fprintf( outfile, "p   count %d\n", decisionTree->mushroomCount );
     }
   } else {
-    printf( "Split on: attr %d value %c\n", decisionTree->splitValue->attribute, decisionTree->splitValue->letter );
-    printDecisionTree( decisionTree->left, tab + 1 );
-    printDecisionTree( decisionTree->right, tab + 1 );
+    fprintf( outfile, "Split on: attr %d value %c   (count %d )\n", decisionTree->splitValue->attribute, decisionTree->splitValue->letter, decisionTree->mushroomCount );
+    printDecision( outfile, decisionTree->left, tab + 1 );
+    printDecision( outfile, decisionTree->right, tab + 1 );
   }
-} /* end printDecisionTree */
 
+} /* end printDecision */
 
 
 /*****************************************************************************
