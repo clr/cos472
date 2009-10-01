@@ -49,7 +49,8 @@ struct Value {
   int attribute;    /* column number from file */
   char letter;    /* letter value from file */
   int count;     /* number of values for an attribute */
-  int edibleCount;  /* number of shrooms with this value that are also edible */
+  int classCount;  /* number of shrooms with this value that are also edible */
+  float entropy; /* calculated entropy when the list is found */
   ValueP next;   /* pointer to next node in the linked list */
 };
 typedef struct Decision * DecisionP; /* pointer to a Decision structure */
@@ -74,11 +75,15 @@ DecisionP newDecision( );
 void printDecisionTree( DecisionP decisionTree );
 void printDecision( FILE * outfile, DecisionP decisionTree, int tab );
 
-ValueP findAvailableValues( MushroomP shroomList );
+ValueP findAvailableValues( char letter, int attribute, MushroomP shroomList );
 ValueP newValue( char letter, int attribute );
 ValueP appendValue( ValueP list, ValueP newvalue );
-ValueP updateValue( ValueP list, char letter, int attribute );
+ValueP updateValue( ValueP list, char letter, int attribute, int isClass );
 ValueP cloneValues( ValueP list );
+
+float calculateEntropy( int classCount, int shroomCount );
+ValueP findHighestGain( char letter, int attribute, ValueP valueList, MushroomP shroomList );
+float logTwo( float value );
 
 void *emalloc( long size );
 void openFile( FILE **fileptr, char *filename, char *mode );
@@ -115,7 +120,7 @@ int main(int argc, char* argv[]) {
  
   shroomList = readMushrooms();      /* read shroom information from file into linked list */
 
-  availableValues = findAvailableValues( shroomList );
+  availableValues = findAvailableValues( 'e', 0, shroomList );
 
   decisionTree = createDecisionTree( 'e', 0, shroomList, availableValues );
 
@@ -276,9 +281,8 @@ DecisionP createDecisionTree( char letter, int attribute, MushroomP shroomList, 
 
   /* choose a value on which to split; for now, we just pick the next in the
    * list and unshift it off the stack */
-  splitValue = availableValues;
-  availableValues = splitValue->next;
-  
+  splitValue = findHighestGain( letter, attribute, availableValues, shroomList );
+
   /* go through the mushroom list, and sort them into one list or the other */
   while( shroomList ){
     shroomIterate = shroomList->next;
@@ -351,23 +355,32 @@ DecisionP newDecision() {
 
 
 /*****************************************************************************
- Iterate through a list of mushrooms and collect the values into a list.
+ Iterate through a list of mushrooms and collect the values into a list. Then we also calculate the entropy for each node, to make it easier to find the information gain later.
  
  @return {ValueP} list of values
  *****************************************************************************/
-ValueP findAvailableValues( MushroomP shroomList ){
-  ValueP list;
+ValueP findAvailableValues( char letter, int attribute, MushroomP shroomList ){
+  MushroomP shroomIterate;
+  shroomIterate = shroomList;
+  ValueP list, listIterate;
   list = NULL;
+  listIterate = NULL;
   int i;
 
   /* for each mushroom, iterate through its attributes, and update the list of values for that attribute */
-  while( shroomList != NULL ){
+  shroomIterate = shroomList;
+  while( shroomIterate != NULL ){
     i = 1; /* we don't look at attribute 0, because that is the class we are trying to identify */
-    while( shroomList->attributes[ i ] != 0 ){
-      list = updateValue( list, shroomList->attributes[ i ], i );
+    while( shroomIterate->attributes[ i ] != 0 ){
+      /* precount whether these values are edible or not */
+      if( shroomIterate->attributes[ attribute ] == letter ){
+        list = updateValue( list, shroomIterate->attributes[ i ], i, 1 );
+      } else {
+        list = updateValue( list, shroomIterate->attributes[ i ], i, 0 );
+      }
       i++;
     }
-    shroomList = shroomList->next;
+    shroomIterate = shroomIterate->next;
   }
 
   return list;
@@ -391,6 +404,7 @@ ValueP newValue( char letter, int attribute ) {
   value->letter = letter;
   value->attribute = attribute;
   value->count = 0;
+  value->classCount = 0;
   value->next = NULL;
 
   return( value );
@@ -425,10 +439,10 @@ ValueP appendValue( ValueP list, ValueP newvalue ){
   Find an Value with the given attribute [column] and letter [class value]
   in the list or create a new Value and append it to the list.
 
-  @param { ValueP, char, int } list, letter, attribute pointer to the first Value in the list
+  @param { ValueP, char, int, int } list, letter, attribute pointer to the first Value in the list, boolean for whether it is in the target class
   @return { ValueP } found the matching Value
  *****************************************************************************/
-ValueP updateValue( ValueP list, char letter, int attribute ){
+ValueP updateValue( ValueP list, char letter, int attribute, int isClass ){
   ValueP current;  /* pointer to the currect value */
   current = list;
   ValueP found;  /* pointer to the result, found or created */
@@ -446,6 +460,7 @@ ValueP updateValue( ValueP list, char letter, int attribute ){
     list = appendValue( list, found );
   }
   found->count = found->count++;
+  found->classCount += isClass;
   return( list );
 } /* end findValue */
 
@@ -471,6 +486,101 @@ ValueP cloneValues( ValueP list ){
   }
   return newList;
 } /* end cloneValues */
+
+
+/*****************************************************************************
+  Look at each available value, pretend to split on it, calculate the entropy 
+  of what that would look like, pick the best reduction in entropy, and
+  return that value to split on, reducing the available values by one.
+
+  @param {char, int, ValueP, MushroomP} letter, attribute, valueList, shroomList
+  @return {ValueP} highestGainValue the popped value that we want to split on.
+******************************************************************************/
+ValueP findHighestGain( char letter, int attribute, ValueP valueList, MushroomP shroomList ){
+  ValueP valueIterate;
+  valueIterate = valueList;
+  ValueP highestGainValue;
+  highestGainValue = NULL;
+  MushroomP shroomIterate;
+  shroomIterate = NULL;
+  float gain, maxGain, currentEntropy, leftEntropy, rightEntropy;
+  int leftCount, leftEdible, rightCount, rightEdible, shroomCount;
+  gain = -1.0;
+  maxGain = -1.0;
+
+  /* go through each available attribute, and calculate the gain of each, but
+   * only retain the highest value */
+  while( valueIterate != NULL ){
+    currentEntropy = 0.0;
+    leftEntropy = 0.0;
+    leftCount = 0;
+    leftEdible = 0;
+    rightEntropy = 0.0;
+    rightCount = 0;
+    rightEdible = 0;
+    shroomIterate = shroomList;
+    while( shroomIterate != NULL ){
+      /* check to see if this mushroom would go to the right or to the left */
+      if( shroomIterate->attributes[ valueIterate->attribute ] == valueIterate->letter ){
+        /* it would go to the left, so now check and see if it's edible or not */
+        leftCount++;
+        if( shroomIterate->attributes[ attribute ] == letter ){
+          leftEdible++;
+        }
+      } else {
+        /* it would go to the right, so now check and see if it's edible or not */
+        rightCount++;
+        if( shroomIterate->attributes[ attribute ] == letter ){
+          rightEdible++;
+        }
+      }
+      shroomIterate = shroomIterate->next;
+    }
+    /* we now have the count values for everything that we need to perform our
+     * gain calculation */
+    shroomCount = leftCount + rightCount;
+    currentEntropy = calculateEntropy( leftEdible + rightEdible, shroomCount );
+    leftEntropy = calculateEntropy( leftEdible, leftCount );
+    rightEntropy = calculateEntropy( rightEdible, rightCount ); 
+      
+    gain = currentEntropy - (float)( leftCount / shroomCount ) * leftEntropy - (float)( rightCount / shroomCount ) * rightEntropy;
+    if( gain > maxGain ){
+      maxGain = gain;
+      highestGainValue = valueIterate;
+    }
+    valueIterate = valueIterate->next;
+  }
+
+  /* pop out the highestGainValue and return it */
+  valueIterate = valueList;
+  while( valueIterate != NULL ){
+    if( valueIterate->next == highestGainValue ){
+      valueIterate->next = highestGainValue->next;
+      break;
+    }
+  }
+  return( highestGainValue );
+}
+
+/* utility function for log2 */
+float logTwo( float value ){
+  return( log( value ) / log( 2.0 ) );
+}
+/************************************************************************************
+  Using an information storage function, calculate the 'entropy' of a Value.
+
+  @param {int, int} classCount, shroomCount
+  @return {float} entropy 
+************************************************************************************/
+float calculateEntropy( int classCount, int shroomCount ){
+  float classPercent;
+  float nonClassPercent;
+
+  classPercent = (float)( classCount ) / shroomCount;
+  nonClassPercent = (float)( shroomCount - classCount ) / shroomCount;
+  
+  return( -( classPercent ) * logTwo( classPercent ) - ( nonClassPercent ) * logTwo( nonClassPercent ) );
+}
 
 
 /*****************************************************************************
