@@ -31,7 +31,8 @@
 
 /*****************************************************************************/
 /* global variables */
-char Infilename[STRLEN]; /* input file name */
+char InTrainfilename[STRLEN]; /* input file name for training data */
+char InTestfilename[STRLEN]; /* input file name for testing data */
 char Outfilename[STRLEN]; /* output file name */
 /*****************************************************************************/
 
@@ -64,7 +65,7 @@ struct Decision {
 };
 /*****************************************************************************/
 /* prototypes */
-MushroomP readMushrooms( );
+MushroomP readMushrooms( char infilename[STRLEN] );
 MushroomP appendMushroom( MushroomP list, MushroomP newshroom );
 MushroomP newMushroom( int attributeCount );
 
@@ -89,7 +90,8 @@ void *emalloc( long size );
 void openFile( FILE **fileptr, char *filename, char *mode );
 
 /*****************************************************************************
- main
+  We run the program by calling something along the lines of:
+  guessMushroom -train mushrooms.data -test moreMushrooms.data -out mushrooms.out 
  ******************************************************************************/
 int main(int argc, char* argv[]) {
   MushroomP shroomList;
@@ -98,27 +100,30 @@ int main(int argc, char* argv[]) {
   shroomList = NULL;
   availableValues = NULL;
   decisionTree = NULL;
+  char infilenameTraining[STRLEN]; /* input file name for training data */
 
-  printf("This program processes data about the attributes mushrooms.\n");
+  printf( "This program processes data about the attributes mushrooms.\n" );
   
   /* initialize filenames to dummy strings */
-  strcpy(Infilename, "none");
-  strcpy(Outfilename, "none");
+  strcpy( infilenameTraining, "none" );
+  strcpy( Outfilename, "none" );
   /* TAKEN FROM p5.c EXAMLPE
      process command-line arguments */
-  while (*++argv) {             /* while there are still command-line args */
-    if (!strcmp(*argv,"-i"))          /* set input file name */
-      strcpy(Infilename,*++argv);
-    else if (!strcmp(*argv,"-o"))     /* set output file name */
-      strcpy(Outfilename,*++argv);
+  while( *++argv ) {             /* while there are still command-line args */
+    if ( !strcmp( *argv, "-train" ) )          /* set input file name */
+      strcpy( infilenameTraining, *++argv );
+    else if( !strcmp( *argv,"-test" ) )          /* set input file name */
+      strcpy( InTestfilename,*++argv );
+    else if( !strcmp( *argv,"-out" ) )     /* set output file name */
+      strcpy( Outfilename,*++argv );
     else {  /*  error checking */
-      printf("\nERROR: option %s not recognized\n", *argv);
-      printf("...exiting program\n\n");
-      exit(0);
+      printf( "\nERROR: option %s not recognized\n", *argv );
+      printf( "...exiting program\n\n" );
+      exit( 0 );
     }
   } /* end, while there are still command-line args */
  
-  shroomList = readMushrooms();      /* read shroom information from file into linked list */
+  shroomList = readMushrooms( infilenameTraining );      /* read shroom information from file into linked list */
 
   availableValues = findAvailableValues( 'e', 0, shroomList );
 
@@ -135,7 +140,7 @@ int main(int argc, char* argv[]) {
 
   @return {MushroomP} list
  *****************************************************************************/
-MushroomP readMushrooms() {
+MushroomP readMushrooms( char infilename[STRLEN] ) {
   FILE* infile;              /* input file (for data) */
 
   int NumMushrooms;    /* number of Mushrooms read from the file */
@@ -149,17 +154,17 @@ MushroomP readMushrooms() {
   currentValue = NULL;
 
   /* prompt user and read filename */
-  if (strcmp(Infilename, "none") == 0) {  /* file name has not been set */
+  if (strcmp(infilename, "none") == 0) {  /* file name has not been set */
     printf("Please type the name of the input file:\n");
     printf("  (Hint: it is mushrooms.data)\n");
     printf("Name of the input file: ");
-    scanf("%s", Infilename);
+    scanf("%s", infilename);
   }
 
   /* open the file for reading */
-  openFile(&infile, Infilename, "r");
+  openFile(&infile, infilename, "r");
   if( !infile ){
-    printf("ERROR: could not open file %s\n", Infilename );
+    printf("ERROR: could not open file %s\n", infilename );
     exit(0);
   }
 
