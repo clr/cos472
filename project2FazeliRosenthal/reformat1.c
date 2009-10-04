@@ -77,6 +77,7 @@ DecisionP newDecision( );
 void printDecisionTree( DecisionP decisionTree, char outfilename[STRLEN] );
 void printDecision( FILE * outfile, DecisionP decisionTree, int tab );
 void printTestResults( char letter, int attribute, DecisionP decisionTree, MushroomP shroomList, char outfilename[STRLEN] );
+int freeDecisions( DecisionP decisionTree );
 
 ValueP findAvailableValues( char letter, int attribute, MushroomP shroomList );
 ValueP newValue( char letter, int attribute );
@@ -112,6 +113,7 @@ int main(int argc, char* argv[]) {
   
   /* initialize filenames to dummy strings */
   strcpy( infilenameTraining, "none" );
+  strcpy( infilenameTesting, "none" );
   strcpy( outfilename, "none" );
   /* TAKEN FROM p5.c EXAMLPE
      process command-line arguments */
@@ -132,14 +134,14 @@ int main(int argc, char* argv[]) {
   /* this is the training data */
   trainingShroomList = readMushrooms( infilenameTraining );
 
+  /* this is the testing data */
+  testingShroomList = readMushrooms( infilenameTesting );
+
   availableValues = findAvailableValues( 'e', 0, trainingShroomList );
 
   decisionTree = createDecisionTree( 'e', 0, trainingShroomList, availableValues );
 
   printDecisionTree( decisionTree, outfilename );
-
-  /* this is the testing data */
-  testingShroomList = readMushrooms( infilenameTesting );
 
   printTestResults( 'e', 0, decisionTree, testingShroomList, outfilename );
 
@@ -616,7 +618,7 @@ int classifyMushroom( DecisionP decisionTree, MushroomP shroom ) {
   if( decisionTree->isLeaf == 1 ){
     return( decisionTree->isClass );
   } else {
-    if( shroom->attributes[ decisionTree->splitValue->attribute ] = decisionTree->splitValue->letter ){
+    if( shroom->attributes[ decisionTree->splitValue->attribute ] == decisionTree->splitValue->letter ){
       classifyMushroom( decisionTree->left, shroom );
     } else {
       classifyMushroom( decisionTree->right, shroom );
@@ -746,22 +748,23 @@ void printTestResults( char letter, int attribute, DecisionP decisionTree, Mushr
   openFile( &outfile, outfilename, "a" );
 
   printDecision( outfile, decisionTree, 0 );
+  decisionCount = freeDecisions( decisionTree );
   fprintf( outfile, "\n\nTest Results:\n" );
   fprintf( outfile, "There are %d examples in the training data.\n", shroomCount );
   fprintf( outfile, "There are %d rules in the decision tree.\n", decisionCount );
-  fprintf( outfile, "There is an average of %f examples per rule.\n", ( (float)shroomCount / decisionCount ) );
-  fprintf( outfile, "%f percent of n examples were classified correctly (%d/%d)\n", 
-    ( (float)negativeCorrectCount / classifyNegativeCount ),
+  fprintf( outfile, "There is an average of %3.2f examples per rule.\n", ( (float)shroomCount / decisionCount ) );
+  fprintf( outfile, "%3.2f percent of n examples were classified correctly (%d/%d)\n", 
+    ( (float)negativeCorrectCount * 100 / classifyNegativeCount ),
     negativeCorrectCount,
     classifyNegativeCount
   );
-  fprintf( outfile, "%f percent of p examples were classified correctly (%d/%d)\n", 
-    ( (float)positiveCorrectCount / classifyPositiveCount ),
+  fprintf( outfile, "%3.2f percent of p examples were classified correctly (%d/%d)\n", 
+    ( (float)positiveCorrectCount * 100 / classifyPositiveCount ),
     positiveCorrectCount,
     classifyPositiveCount
   );
-  fprintf( outfile, "%f percent of all the data were classified correctly (%d/%d)\n", 
-    ( (float)( negativeCorrectCount + positiveCorrectCount ) / shroomCount ),
+  fprintf( outfile, "%3.2f percent of all the data were classified correctly (%d/%d)\n", 
+    ( (float)( negativeCorrectCount + positiveCorrectCount ) * 100 / shroomCount ),
     ( negativeCorrectCount + positiveCorrectCount ),
     shroomCount
   );
@@ -799,6 +802,23 @@ void freeMushrooms(MushroomP mushroomList) {
 	free(mushroomList);
 
 } /* end freeMushrooms */
+
+/*****************************************************************************
+  Iterate through the decision tree and free the memory for each node,
+  keeping count so we can return the number of nodes which we freed.
+
+  param {DecisionP} decisionTree
+  return {int} decisionCount
+ *****************************************************************************/
+int freeDecisions( DecisionP decisionTree ) {
+
+  if( decisionTree->isLeaf == 1 ){
+    free( decisionTree );
+    return( 1 );
+  } else {
+    return( freeDecisions( decisionTree->left ) + freeDecisions( decisionTree->right ) );
+  }
+} /* end freeDecisions */
 
 
 /*****************************************************************************

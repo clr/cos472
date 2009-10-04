@@ -88,8 +88,8 @@ Split on: attr 1 value x   (count 1000 )
 
 Test Results:
 There are 1000 examples in the training data.
-There are 0 rules in the decision tree.
-There is an average of inf examples per rule.
-0.102000 percent of n examples were classified correctly (102/1000)
-nan percent of p examples were classified correctly (0/0)
-0.102000 percent of all the data were classified correctly (102/1000)
+There are 22 rules in the decision tree.
+There is an average of 45.45 examples per rule.
+100.00 percent of n examples were classified correctly (102/102)
+100.00 percent of p examples were classified correctly (898/898)
+100.00 percent of all the data were classified correctly (1000/1000)
