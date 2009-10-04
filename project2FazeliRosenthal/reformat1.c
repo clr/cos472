@@ -57,7 +57,7 @@ struct Value {
 typedef struct Decision * DecisionP; /* pointer to a Decision structure */
 struct Decision {
   int isLeaf; /* boolean 1 for leaf node, 0 for not */
-  int isClass; /* -1 for no, 0 for maybe, 1 for yes */
+  int isClass; /* -1 for maybe, 0 for no, 1 for yes */
   int mushroomCount; /* keep track of how many pass through here */
   ValueP splitValue; /* pointer to the Value on which the decision splits */
   DecisionP left; /* pointer to positive matches */
@@ -68,13 +68,15 @@ struct Decision {
 MushroomP readMushrooms( char infilename[STRLEN] );
 MushroomP appendMushroom( MushroomP list, MushroomP newshroom );
 MushroomP newMushroom( int attributeCount );
+int classifyMushroom( DecisionP decisionTree, MushroomP shroom );
 
 DecisionP createDecisionTree( char letter, int attribute, MushroomP shroomList, ValueP availableValues );
 DecisionP createLeafNode( int isClass, int mushroomCount );
 DecisionP createSplitNode( ValueP splitValue, char letter, int attribute, MushroomP positiveShrooms, MushroomP negativeShrooms, ValueP availableValues, int mushroomCount );
 DecisionP newDecision( );
-void printDecisionTree( DecisionP decisionTree );
+void printDecisionTree( DecisionP decisionTree, char outfilename[STRLEN] );
 void printDecision( FILE * outfile, DecisionP decisionTree, int tab );
+void printTestResults( char letter, int attribute, DecisionP decisionTree, MushroomP shroomList, char outfilename[STRLEN] );
 
 ValueP findAvailableValues( char letter, int attribute, MushroomP shroomList );
 ValueP newValue( char letter, int attribute );
@@ -94,28 +96,32 @@ void openFile( FILE **fileptr, char *filename, char *mode );
   guessMushroom -train mushrooms.data -test moreMushrooms.data -out mushrooms.out 
  ******************************************************************************/
 int main(int argc, char* argv[]) {
-  MushroomP shroomList;
+  MushroomP trainingShroomList;
+  trainingShroomList = NULL;
+  MushroomP testingShroomList;
+  testingShroomList = NULL;
   ValueP availableValues;
   DecisionP decisionTree;
-  shroomList = NULL;
   availableValues = NULL;
   decisionTree = NULL;
   char infilenameTraining[STRLEN]; /* input file name for training data */
+  char infilenameTesting[STRLEN]; /* input file name for testing data */
+  char outfilename[STRLEN]; /* output file name for printing the results */
 
   printf( "This program processes data about the attributes mushrooms.\n" );
   
   /* initialize filenames to dummy strings */
   strcpy( infilenameTraining, "none" );
-  strcpy( Outfilename, "none" );
+  strcpy( outfilename, "none" );
   /* TAKEN FROM p5.c EXAMLPE
      process command-line arguments */
   while( *++argv ) {             /* while there are still command-line args */
     if ( !strcmp( *argv, "-train" ) )          /* set input file name */
       strcpy( infilenameTraining, *++argv );
     else if( !strcmp( *argv,"-test" ) )          /* set input file name */
-      strcpy( InTestfilename,*++argv );
+      strcpy( infilenameTesting, *++argv );
     else if( !strcmp( *argv,"-out" ) )     /* set output file name */
-      strcpy( Outfilename,*++argv );
+      strcpy( outfilename,*++argv );
     else {  /*  error checking */
       printf( "\nERROR: option %s not recognized\n", *argv );
       printf( "...exiting program\n\n" );
@@ -123,13 +129,19 @@ int main(int argc, char* argv[]) {
     }
   } /* end, while there are still command-line args */
  
-  shroomList = readMushrooms( infilenameTraining );      /* read shroom information from file into linked list */
+  /* this is the training data */
+  trainingShroomList = readMushrooms( infilenameTraining );
 
-  availableValues = findAvailableValues( 'e', 0, shroomList );
+  availableValues = findAvailableValues( 'e', 0, trainingShroomList );
 
-  decisionTree = createDecisionTree( 'e', 0, shroomList, availableValues );
+  decisionTree = createDecisionTree( 'e', 0, trainingShroomList, availableValues );
 
-  printDecisionTree( decisionTree );
+  printDecisionTree( decisionTree, outfilename );
+
+  /* this is the testing data */
+  testingShroomList = readMushrooms( infilenameTesting );
+
+  printTestResults( 'e', 0, decisionTree, testingShroomList, outfilename );
 
 	return (0); /* return a value */
 
@@ -273,7 +285,7 @@ DecisionP createDecisionTree( char letter, int attribute, MushroomP shroomList, 
   /* if we have nothing left to split on, then return a 'maybe' but we should 
    * probably never arrive here, correct? */
   if( !availableValues ){
-    return createLeafNode( 0, shroomCount );
+    return createLeafNode( -1, shroomCount );
   }
   /* return a positive leaf node if all of the children have this class */
   if( edibleCount == shroomCount ){
@@ -281,7 +293,7 @@ DecisionP createDecisionTree( char letter, int attribute, MushroomP shroomList, 
   }
   /* return a negative leaf node if none of the children have this class */
   if( edibleCount == 0 ){
-    return createLeafNode( -1, shroomCount );
+    return createLeafNode( 0, shroomCount );
   }
 
   /* choose a value on which to split; for now, we just pick the next in the
@@ -568,10 +580,6 @@ ValueP findHighestGain( char letter, int attribute, ValueP valueList, MushroomP 
   return( highestGainValue );
 }
 
-/* utility function for log2 */
-float logTwo( float value ){
-  return( log( value ) / log( 2.0 ) );
-}
 /************************************************************************************
   Using an information storage function, calculate the 'entropy' of a Value.
 
@@ -597,6 +605,26 @@ float calculateEntropy( int classCount, int shroomCount ){
   return( -( classPercent ) * log2f( classPercent ) - ( nonClassPercent ) * log2f( nonClassPercent ) );
 }
 
+/*****************************************************************************
+  Recurse through a decision tree, and estimate the class of this mushroom.
+
+  @param {DecisionP, MushroomP}  decisionTree, shroom
+  @return {int} isClass
+ *****************************************************************************/
+int classifyMushroom( DecisionP decisionTree, MushroomP shroom ) {
+
+  if( decisionTree->isLeaf == 1 ){
+    return( decisionTree->isClass );
+  } else {
+    if( shroom->attributes[ decisionTree->splitValue->attribute ] = decisionTree->splitValue->letter ){
+      classifyMushroom( decisionTree->left, shroom );
+    } else {
+      classifyMushroom( decisionTree->right, shroom );
+    }
+  }
+
+} /* end classifyMushroom */
+
 
 /*****************************************************************************
  Print out a decision tree recursively.  Should look something like:
@@ -613,19 +641,19 @@ float calculateEntropy( int classCount, int shroomCount ){
   @param {DecisionP, int} decisionTree, tab
   @return {} just print
  *****************************************************************************/
-void printDecisionTree( DecisionP decisionTree ){
+void printDecisionTree( DecisionP decisionTree, char outfilename[STRLEN]  ){
   FILE *outfile;             /* output file (for results) */
   ValueP values;             /* pointer to values for loop */
   values = NULL;
 
   /* prompt user and read filename */
-  if (strcmp(Outfilename, "none") == 0) {  /* file name has not been set */
-    printf("Please type the name of the output file: ");
-    scanf("%s", Outfilename);
+  if( strcmp( outfilename, "none" ) == 0 ){  /* file name has not been set */
+    printf( "Please type the name of the output file: " );
+    scanf( "%s", outfilename );
   }
 
   /* open the output file for writing */
-  openFile(&outfile, Outfilename, "w");
+  openFile( &outfile, outfilename, "w" );
 
   printDecision( outfile, decisionTree, 0 );
 
@@ -658,6 +686,88 @@ void printDecision( FILE * outfile, DecisionP decisionTree, int tab ) {
   }
 
 } /* end printDecision */
+
+/*****************************************************************************
+ Print out a decision tree recursively.  Should look something like:
+
+There are 14 examples in the training data.
+There are 5 rules in the decision tree.
+There is an average of 2.8 examples per rule.
+100.0 percent of n examples were classified correctly (5/5)
+100.0 percent of p examples were classified correctly (9/9)
+100.0 percent of all the data were classified correctly (14/14)
+
+  @param {DecisionP, MushroomP, char} decisionTree, shroomList, outfile
+  @return {} just print
+ *****************************************************************************/
+void printTestResults( char letter, int attribute, DecisionP decisionTree, MushroomP shroomList, char outfilename[STRLEN]  ){
+  FILE *outfile;             /* output file (for results) */
+  ValueP values;             /* pointer to values for loop */
+  values = NULL;
+  int shroomCount, decisionCount;
+  int classifyPositiveCount, classifyNegativeCount;
+  int positiveCorrectCount, negativeCorrectCount;
+  int isClass;
+
+  shroomCount = 0;
+  decisionCount = 0;
+  classifyPositiveCount = 0;
+  classifyNegativeCount = 0;
+  positiveCorrectCount = 0;
+  negativeCorrectCount = 0;
+  isClass = 0;
+
+  /* collect the statistics */
+  while( shroomList ){
+    shroomCount++;
+
+    isClass = classifyMushroom( decisionTree, shroomList );
+    if( isClass == 1 ){
+      classifyPositiveCount++;
+      if( shroomList->attributes[ attribute ] == letter ){
+        positiveCorrectCount++;
+      }
+    } else {
+      classifyNegativeCount++;
+      if( shroomList->attributes[ attribute ] != letter ){
+        negativeCorrectCount++;
+      }
+    }
+    shroomList = shroomList->next;
+  }  
+
+  /* prompt user and read filename */
+  if( strcmp( outfilename, "none" ) == 0 ){  /* file name has not been set */
+    printf( "Please type the name of the output file: " );
+    scanf( "%s", outfilename );
+  }
+
+  /* open the output file for writing */
+  openFile( &outfile, outfilename, "a" );
+
+  printDecision( outfile, decisionTree, 0 );
+  fprintf( outfile, "\n\nTest Results:\n" );
+  fprintf( outfile, "There are %d examples in the training data.\n", shroomCount );
+  fprintf( outfile, "There are %d rules in the decision tree.\n", decisionCount );
+  fprintf( outfile, "There is an average of %f examples per rule.\n", ( (float)shroomCount / decisionCount ) );
+  fprintf( outfile, "%f percent of n examples were classified correctly (%d/%d)\n", 
+    ( (float)negativeCorrectCount / classifyNegativeCount ),
+    negativeCorrectCount,
+    classifyNegativeCount
+  );
+  fprintf( outfile, "%f percent of p examples were classified correctly (%d/%d)\n", 
+    ( (float)positiveCorrectCount / classifyPositiveCount ),
+    positiveCorrectCount,
+    classifyPositiveCount
+  );
+  fprintf( outfile, "%f percent of all the data were classified correctly (%d/%d)\n", 
+    ( (float)( negativeCorrectCount + positiveCorrectCount ) / shroomCount ),
+    ( negativeCorrectCount + positiveCorrectCount ),
+    shroomCount
+  );
+
+  fclose( outfile );
+} /* end printDecisionTree */
 
 
 /*****************************************************************************
