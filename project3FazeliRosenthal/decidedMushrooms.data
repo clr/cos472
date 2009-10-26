@@ -1,0 +1,75 @@
+Split on: attr 5 value a   (count 200 )
+ Leaf: class is e count 73
+ Split on: attr 21 value a   (count 127 )
+  Leaf: class is e count 14
+  Split on: attr 11 value b   (count 113 )
+   Leaf: class is e count 15
+   Split on: attr 8 value b   (count 98 )
+    Leaf: class is e count 60
+    Split on: attr 1 value b   (count 38 )
+     Leaf: class is e count 0
+     Split on: attr 7 value c   (count 38 )
+      Split on: attr 11 value c   (count 38 )
+       Leaf: class is e count 0
+       Split on: attr 22 value d   (count 38 )
+        Leaf: class is e count 0
+        Split on: attr 0 value e   (count 38 )
+         Leaf: class is e count 17
+         Leaf: class is not-e count 21
+      Leaf: class is e count 0
+Split on: attr 5 value a   (count 200 )
+ Leaf: class is e count 73
+ Split on: attr 21 value a   (count 127 )
+  Leaf: class is e count 14
+  Split on: attr 11 value b   (count 113 )
+   Leaf: class is e count 15
+   Split on: attr 8 value b   (count 98 )
+    Leaf: class is e count 60
+    Split on: attr 1 value b   (count 38 )
+     Leaf: class is e count 0
+     Split on: attr 7 value c   (count 38 )
+      Split on: attr 11 value c   (count 38 )
+       Leaf: class is e count 0
+       Split on: attr 22 value d   (count 38 )
+        Leaf: class is e count 0
+        Split on: attr 0 value e   (count 38 )
+         Leaf: class is e count 17
+         Leaf: class is not-e count 21
+      Leaf: class is e count 0
+
+
+Test Results:
+There are 200 examples in the training data.
+There are 10 rules in the decision tree.
+There is an average of 20.00 examples per rule.
+100.00 percent of n examples were classified correctly (81/81)
+100.00 percent of p examples were classified correctly (719/719)
+100.00 percent of all the data were classified correctly (800/800)
+Split on: attr 5 value a   (count 200 )
+ Leaf: class is e count 69
+ Split on: attr 21 value a   (count 131 )
+  Leaf: class is e count 11
+  Split on: attr 8 value b   (count 120 )
+   Leaf: class is e count 73
+   Split on: attr 1 value b   (count 47 )
+    Leaf: class is e count 0
+    Split on: attr 11 value b   (count 47 )
+     Leaf: class is e count 12
+     Split on: attr 7 value c   (count 35 )
+      Split on: attr 11 value c   (count 35 )
+       Leaf: class is e count 0
+       Split on: attr 22 value d   (count 35 )
+        Leaf: class is e count 0
+        Split on: attr 0 value e   (count 35 )
+         Leaf: class is e count 17
+         Leaf: class is not-e count 18
+      Leaf: class is e count 0
+
+
+Test Results:
+There are 200 examples in the training data.
+There are 10 rules in the decision tree.
+There is an average of 20.00 examples per rule.
+100.00 percent of n examples were classified correctly (84/84)
+100.00 percent of p examples were classified correctly (716/716)
+100.00 percent of all the data were classified correctly (800/800)
