@@ -1,0 +1,19 @@
+
+Casey Rosenthal's Modification
+
+PAIRED T-TESTs 
+ (these numbers hold as long as there are 5 observations)
+  |values| greater than 1.533 are significant at level .1
+  |values| greater than 2.132 are significant at level .05
+  |values| greater than 2.776 are significant at level .025
+  |values| greater than 3.747 are significant at level .01
+  |values| greater than 4.604 are significant at level .005
+  |values| greater than 7.173 are significant at level .001
+  |values| greater than 8.610 are significant at level .0005
+
+pairedt is  2.3717  var1 vs. var2
+pairedt is -1.4142  var1 vs. var3
+pairedt is -4.2164  var2 vs. var3
+pairedt is  3.2808  var1 vs. var4
+pairedt is  3.2801  var3 vs. var4
+pairedt is  3.1089  var2 vs. var4

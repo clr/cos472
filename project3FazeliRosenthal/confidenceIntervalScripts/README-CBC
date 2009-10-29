@@ -1,0 +1,74 @@
+Instructions for running Awk and Gnuplot
+  This will all work best if you run awk and gnuplot from the directory
+  that contains the relevant files
+----------------------------------------------------------------------------
+Files here:
+data-in        -- example data from runs
+awk.confidence -- awk script; generates data for confidence intervals
+                    (creates file data-confidence from data-in)
+awk.pairedt    -- awk script; generates data for paired-t tests
+                    (creates file data-pairedt from data-in)
+confidence.g   -- gnuplot instructions; generates confidence intervals
+	            (jpg or png file)
+----------------------------------------------------------------------------
+1. Get your data in the right format
+   (see data-in)
+
+2. run awk to get confidence intervals and paired-t tests
+
+     awk -f awk.confidence data-in > data-confidence
+     awk -f awk.pairedt data-in > data-pairedt
+
+3. run gnuplot to plot your confidence intervals
+
+     gnuplot confidence.g
+
+   this creates the file intervals.jpg
+
+   Note: it's possible that png files will work better there are two lines in
+   the confidence.g file that control this -- set terminal and set output.
+
+4. If you are in the Linux lab and you want to view this before printing it,
+   you can run display, e.g.,  
+    
+     display intervals.jpg
+
+   You can also put this in your public_www and view it through a browser,
+   which is what you'd want to do during the lab.
+
+5. Print, if you like, using lpr
+
+     lpr intervals.jpg
+   
+6. If you will be writing your paper on a Mac or Windows machine, use an FTP
+   client to pull the file over to your machine. (Or else, use the browser
+   approach.) You should then be able to insert the figure into a Word
+   document. 
+
+
+You can also use gnuplot interactively, which is handy if you're going to be
+mucking with what you're drawing. Do do this, comment out all the lines that
+begin with "set terminal" and "set output", and run gnuplot (while logged in
+directly on a Linux machine). You can then start gnuplot with no arguments,
+and load the file in at the gnuplot prompt, for example:
+     gnuplot
+     load "confidence.g"
+
+If you don't like what you see, you can edit the file and reload it without
+quitting out of gnuplot.
+
+Note that there's a bug in gnuplot in terms of labelling the vertical axis. It
+displays wrong when you view it through gnuplot, but is fine in the final file
+(next step).
+
+To save to a file while running interactively, while still running gnuplot:
+
+  set terminal jpeg
+  set output "intervals.jpg"
+              (or some other filename)
+
+This will create a file called intervals.jpg that can be sent to a
+printer and/or incorporated into other documents.
+
+To quit from gnuplot, type quit
+---------------------------------------------------------------

@@ -1,0 +1,16 @@
+
+Adnan Fazeli's and Casey Rosenthal's Modification
+
+PAIRED T-TESTs 
+ (these numbers hold as long as there are 5 observations)
+  |values| greater than 1.533 are significant at level .1
+  |values| greater than 2.132 are significant at level .05
+  |values| greater than 2.776 are significant at level .025
+  |values| greater than 3.747 are significant at level .01
+  |values| greater than 4.604 are significant at level .005
+  |values| greater than 7.173 are significant at level .001
+  |values| greater than 8.610 are significant at level .0005
+
+pairedt is -1.4044  InformationGain vs. Alphabetical
+pairedt is -0.2092  InformationGain vs. FattestValue
+pairedt is  0.4249  Alphabetical vs. FattestValue

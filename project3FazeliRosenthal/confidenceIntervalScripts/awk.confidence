@@ -1,0 +1,48 @@
+#######################################################################
+# Routine to calculate confidence intervals, given 5 observations
+# Clare Bates Congdon Mon Oct  5 21:38:22 2009
+# run this with "awk -f awk.confidence <input>"
+#   input can be unspecified == type in from standard input
+#   but each line should be of the format:
+# conf a b c d e systemname
+#
+# each of a b c d e is the number of correctly classified examples
+# systemname is just a label that you use to refer to the system, e.g., ID3
+#######################################################################
+BEGIN {
+	n = 5.0;	#number of observations
+	idnum = 10;	# for use by gnuplot
+      }
+
+# for lines beginning with "conf", do the following
+/conf/	{   
+  a = $2;
+  b = $3;
+  c = $4;
+  d = $5;
+  e = $6;
+  sys = $7;
+
+  # calculate xbar -- the average
+  xbar = (a + b + c + d + e) / n;
+  printf("xbar is %5.2f; ", xbar);
+
+  # calculate sample variance
+  svar = ((a-xbar)*(a-xbar) + (b-xbar)*(b-xbar) + (c-xbar)*(c-xbar) + (d-xbar)*(d-xbar) + (e-xbar)*(e-xbar)) / (n-1.0);
+  printf("svar is %5.2f; ", svar);
+
+  # calculate the standard error
+  # (note: sqrt(svar) is also called the standard deviation)
+  stderror = sqrt(svar)/sqrt(n);
+
+  # calculate the high and low end of the interval
+  # 1.96 is a magic number for 95% confidence -- you find it in a stats book
+  xlow = xbar - 1.96*stderror;
+  xhigh = xbar + 1.96*stderror;
+  printf("xlow is %7.4f  xhigh is %7.4f  ", xlow,xhigh);
+
+  printf("%s %d\n", sys, idnum);
+
+  idnum = idnum + 10;	# reset for next line
+
+}

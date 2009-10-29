@@ -1,0 +1,15 @@
+Example data for awk script
+  These numbers are just made up to illustrate what you need to put in and what
+  you'll get out. They are the numbers used in the project3.html handout
+
+conf 98.5 97.5 99.5 99.0 98.0 var1
+conf 97.0 98.0 96.0 97.5 96.5 var2
+conf 98.0 99.0 99.5 100.0 98.5 var3
+conf 44.3 44.8 99.9 3.7 50.4 var4
+
+pairedt 98.5 97.5 99.5 99.0 98.0 var1 97.0 98.0 96.0 97.5 96.5 var2
+pairedt 98.5 97.5 99.5 99.0 98.0 var1 98.0 99.0 99.5 100.0 98.5 var3
+pairedt 97.0 98.0 96.0 97.5 96.5 var2 98.0 99.0 99.5 100.0 98.5 var3
+pairedt 98.5 97.5 99.5 99.0 98.0 var1 44.3 44.8 99.9 3.7 50.4 var4
+pairedt 98.0 99.0 99.5 100.0 98.5 var3 44.3 44.8 99.9 3.7 50.4 var4
+pairedt 97.0 98.0 96.0 97.5 96.5 var2 44.3 44.8 99.9 3.7 50.4 var4

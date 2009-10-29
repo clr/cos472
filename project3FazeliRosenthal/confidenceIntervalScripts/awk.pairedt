@@ -1,0 +1,55 @@
+#######################################################################
+# Routine to calculate paired t-test, given 10 observations
+#   (5 from each of two systems)
+# Clare Bates Congdon Mon Oct  5 21:38:33 2009
+#
+# run this with "awk -f awk.pairedt <input>"
+#   input can be unspecified == type in from standard input
+#   but each line should be of the format:
+# pairedt a1 b1 c1 d1 e1 sys1	 a2 b2 c2 d2 e2 sys2
+#######################################################################
+BEGIN {
+  n = 5.0;			#number of observations
+
+  # significance levels can be found in a stats book
+  printf("\nAdnan Fazeli's and Casey Rosenthal's Modification\n");
+  printf("\nPAIRED T-TESTs \n");
+  printf(" (these numbers hold as long as there are 5 observations)\n");
+  printf("  |values| greater than 1.533 are significant at level .1\n");
+  printf("  |values| greater than 2.132 are significant at level .05\n");
+  printf("  |values| greater than 2.776 are significant at level .025\n");
+  printf("  |values| greater than 3.747 are significant at level .01\n");
+  printf("  |values| greater than 4.604 are significant at level .005\n");
+  printf("  |values| greater than 7.173 are significant at level .001\n");
+  printf("  |values| greater than 8.610 are significant at level .0005\n");
+  printf("\n");
+}
+
+# for lines beginning with "pairedt", do the following
+/pairedt/	{   
+  a1 = $2;  b1 = $3;  c1 = $4;  d1 = $5;  e1 = $6;
+  system1 = $7;
+
+  a2 = $8;  b2 = $9;  c2 = $10;  d2 = $11;  e2 = $12;
+  system2 = $13;
+
+  # calculate sum of difference and sum of squares of differences
+  dsum = (a1-a2) + (b1-b2) + (c1-c2) + (d1-d2) + (e1-e2);
+  dsum2 = (a1-a2)*(a1-a2) + (b1-b2)*(b1-b2) + (c1-c2)*(c1-c2) + (d1-d2)*(d1-d2) + (e1-e2)*(e1-e2);
+
+  # average difference
+  dbar = (1.0*dsum)/(1.0*n);
+	
+  # standard deviation
+  stddev2 = (dsum2 - dsum*dsum/n) / (n-1.0);
+  stddev = sqrt(stddev2);
+
+  #printf("stddev is %5.2f;  stddev2 is %5.2f\n", stddev, stddev2);
+
+  pairedt = dbar / (stddev / sqrt(n));
+
+  printf("pairedt is %7.4f  ", pairedt);
+
+  {print $7, "vs.", $13};
+
+}

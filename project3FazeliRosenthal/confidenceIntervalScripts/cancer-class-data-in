@@ -1,0 +1,7 @@
+conf 84.47 93.6 97.95 84.54 89.32 InformationGain
+conf 90.36 90.82 92.54 87.62 87.94 Alphabetical
+conf 88.24 93.68 96.35 90.52 97.15 FattestValue
+
+pairedt 84.47 93.6 97.95 84.54 89.32 InformationGain 90.36 90.82 92.54 87.62 87.94 Alphabetical
+pairedt 84.47 93.6 97.95 84.54 89.32 InformationGain 88.24 93.68 96.35 90.52 97.15 FattestValue
+pairedt 90.36 90.82 92.54 87.62 87.94 Alphabetical 88.24 93.68 96.35 90.52 97.15 FattestValue
