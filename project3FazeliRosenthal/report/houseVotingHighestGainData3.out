@@ -1,0 +1,20 @@
+Split on: attr 4 value y   (count 87 )
+ Split on: attr 11 value y   (count 42 )
+  Split on: attr 16 value y   (count 6 )
+   Leaf: class is not-d count 4
+   Leaf: class is d count 2
+  Leaf: class is not-d count 36
+ Split on: attr 3 value n   (count 45 )
+  Split on: attr 7 value y   (count 3 )
+   Leaf: class is not-d count 2
+   Leaf: class is d count 1
+  Leaf: class is d count 42
+
+
+Test Results:
+There are 87 examples in the training data.
+There are 6 rules in the decision tree.
+There is an average of 14.50 examples per rule.
+87.12 percent of not-class examples were classified correctly (115/132)
+94.91 percent of class examples were classified correctly (205/216)
+91.95 percent of all the data were classified correctly (320/348)

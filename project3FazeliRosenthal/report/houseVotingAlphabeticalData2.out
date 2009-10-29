@@ -1,0 +1,218 @@
+Split on: attr 16 value ?   (count 87 )
+ Split on: attr 12 value ?   (count 20 )
+  Split on: attr 2 value ?   (count 2 )
+   Leaf: class is d count 1
+   Leaf: class is not-d count 1
+  Split on: attr 2 value ?   (count 18 )
+   Leaf: class is d count 5
+   Split on: attr 11 value ?   (count 13 )
+    Leaf: class is d count 0
+    Split on: attr 6 value ?   (count 13 )
+     Leaf: class is d count 1
+     Split on: attr 1 value ?   (count 12 )
+      Leaf: class is d count 0
+      Split on: attr 3 value ?   (count 12 )
+       Leaf: class is d count 0
+       Split on: attr 4 value ?   (count 12 )
+        Leaf: class is d count 0
+        Split on: attr 5 value ?   (count 12 )
+         Leaf: class is d count 0
+         Split on: attr 7 value ?   (count 12 )
+          Leaf: class is d count 0
+          Split on: attr 8 value ?   (count 12 )
+           Leaf: class is d count 0
+           Split on: attr 10 value ?   (count 12 )
+            Leaf: class is d count 0
+            Split on: attr 13 value ?   (count 12 )
+             Leaf: class is d count 0
+             Split on: attr 14 value ?   (count 12 )
+              Leaf: class is d count 0
+              Split on: attr 15 value ?   (count 12 )
+               Leaf: class is d count 1
+               Split on: attr 9 value ?   (count 11 )
+                Leaf: class is d count 0
+                Split on: attr 2 value n   (count 11 )
+                 Split on: attr 4 value n   (count 4 )
+                  Leaf: class is d count 2
+                  Split on: attr 5 value n   (count 2 )
+                   Leaf: class is d count 0
+                   Split on: attr 6 value n   (count 2 )
+                    Leaf: class is d count 0
+                    Split on: attr 10 value n   (count 2 )
+                     Leaf: class is d count 1
+                     Leaf: class is not-d count 1
+                 Split on: attr 4 value n   (count 7 )
+                  Leaf: class is d count 6
+                  Leaf: class is not-d count 1
+ Split on: attr 12 value ?   (count 67 )
+  Split on: attr 2 value ?   (count 4 )
+   Leaf: class is d count 1
+   Split on: attr 11 value ?   (count 3 )
+    Leaf: class is d count 0
+    Split on: attr 6 value ?   (count 3 )
+     Leaf: class is d count 0
+     Split on: attr 1 value ?   (count 3 )
+      Leaf: class is d count 0
+      Split on: attr 3 value ?   (count 3 )
+       Leaf: class is d count 0
+       Split on: attr 4 value ?   (count 3 )
+        Leaf: class is d count 0
+        Split on: attr 5 value ?   (count 3 )
+         Leaf: class is d count 0
+         Split on: attr 7 value ?   (count 3 )
+          Leaf: class is not-d count 1
+          Split on: attr 8 value ?   (count 2 )
+           Leaf: class is d count 0
+           Split on: attr 10 value ?   (count 2 )
+            Leaf: class is d count 0
+            Split on: attr 13 value ?   (count 2 )
+             Leaf: class is d count 0
+             Split on: attr 14 value ?   (count 2 )
+              Leaf: class is d count 0
+              Split on: attr 15 value ?   (count 2 )
+               Leaf: class is d count 0
+               Split on: attr 9 value ?   (count 2 )
+                Leaf: class is d count 0
+                Split on: attr 2 value n   (count 2 )
+                 Split on: attr 4 value n   (count 2 )
+                  Split on: attr 5 value n   (count 2 )
+                   Leaf: class is d count 1
+                   Leaf: class is not-d count 1
+                  Leaf: class is d count 0
+                 Leaf: class is d count 0
+  Split on: attr 2 value ?   (count 63 )
+   Split on: attr 11 value ?   (count 3 )
+    Leaf: class is d count 0
+    Split on: attr 6 value ?   (count 3 )
+     Leaf: class is d count 0
+     Split on: attr 1 value ?   (count 3 )
+      Leaf: class is d count 1
+      Split on: attr 3 value ?   (count 2 )
+       Leaf: class is d count 0
+       Split on: attr 4 value ?   (count 2 )
+        Leaf: class is d count 0
+        Split on: attr 5 value ?   (count 2 )
+         Leaf: class is d count 0
+         Split on: attr 7 value ?   (count 2 )
+          Leaf: class is d count 0
+          Split on: attr 8 value ?   (count 2 )
+           Leaf: class is d count 0
+           Split on: attr 10 value ?   (count 2 )
+            Leaf: class is d count 0
+            Split on: attr 13 value ?   (count 2 )
+             Leaf: class is d count 0
+             Split on: attr 14 value ?   (count 2 )
+              Leaf: class is d count 0
+              Split on: attr 15 value ?   (count 2 )
+               Leaf: class is d count 0
+               Split on: attr 9 value ?   (count 2 )
+                Leaf: class is d count 0
+                Split on: attr 2 value n   (count 2 )
+                 Leaf: class is d count 0
+                 Split on: attr 4 value n   (count 2 )
+                  Leaf: class is d count 1
+                  Leaf: class is not-d count 1
+   Split on: attr 11 value ?   (count 60 )
+    Leaf: class is not-d count 1
+    Split on: attr 6 value ?   (count 59 )
+     Leaf: class is d count 0
+     Split on: attr 1 value ?   (count 59 )
+      Leaf: class is d count 0
+      Split on: attr 3 value ?   (count 59 )
+       Leaf: class is d count 0
+       Split on: attr 4 value ?   (count 59 )
+        Leaf: class is d count 0
+        Split on: attr 5 value ?   (count 59 )
+         Leaf: class is d count 0
+         Split on: attr 7 value ?   (count 59 )
+          Leaf: class is d count 0
+          Split on: attr 8 value ?   (count 59 )
+           Split on: attr 10 value ?   (count 2 )
+            Leaf: class is d count 0
+            Split on: attr 13 value ?   (count 2 )
+             Leaf: class is d count 0
+             Split on: attr 14 value ?   (count 2 )
+              Leaf: class is d count 0
+              Split on: attr 15 value ?   (count 2 )
+               Leaf: class is d count 0
+               Split on: attr 9 value ?   (count 2 )
+                Leaf: class is d count 0
+                Split on: attr 2 value n   (count 2 )
+                 Split on: attr 4 value n   (count 2 )
+                  Leaf: class is d count 1
+                  Leaf: class is not-d count 1
+                 Leaf: class is d count 0
+           Split on: attr 10 value ?   (count 57 )
+            Leaf: class is d count 0
+            Split on: attr 13 value ?   (count 57 )
+             Leaf: class is d count 1
+             Split on: attr 14 value ?   (count 56 )
+              Leaf: class is d count 1
+              Split on: attr 15 value ?   (count 55 )
+               Leaf: class is not-d count 3
+               Split on: attr 9 value ?   (count 52 )
+                Leaf: class is d count 1
+                Split on: attr 2 value n   (count 51 )
+                 Split on: attr 4 value n   (count 26 )
+                  Leaf: class is d count 13
+                  Split on: attr 5 value n   (count 13 )
+                   Leaf: class is d count 0
+                   Split on: attr 6 value n   (count 13 )
+                    Leaf: class is not-d count 3
+                    Split on: attr 10 value n   (count 10 )
+                     Split on: attr 11 value n   (count 5 )
+                      Leaf: class is not-d count 3
+                      Split on: attr 12 value n   (count 2 )
+                       Leaf: class is d count 0
+                       Split on: attr 13 value n   (count 2 )
+                        Leaf: class is d count 0
+                        Split on: attr 14 value n   (count 2 )
+                         Leaf: class is d count 0
+                         Split on: attr 1 value n   (count 2 )
+                          Split on: attr 3 value n   (count 2 )
+                           Split on: attr 7 value n   (count 2 )
+                            Split on: attr 8 value n   (count 2 )
+                             Split on: attr 9 value n   (count 2 )
+                              Split on: attr 15 value n   (count 2 )
+                               Split on: attr 16 value n   (count 2 )
+                                Leaf: class is d count 1
+                                Leaf: class is not-d count 1
+                               Leaf: class is d count 0
+                              Leaf: class is d count 0
+                             Leaf: class is d count 0
+                            Leaf: class is d count 0
+                           Leaf: class is d count 0
+                          Leaf: class is d count 0
+                     Leaf: class is not-d count 5
+                 Split on: attr 4 value n   (count 25 )
+                  Leaf: class is d count 11
+                  Split on: attr 5 value n   (count 14 )
+                   Leaf: class is d count 0
+                   Split on: attr 6 value n   (count 14 )
+                    Leaf: class is d count 0
+                    Split on: attr 10 value n   (count 14 )
+                     Split on: attr 11 value n   (count 5 )
+                      Leaf: class is not-d count 3
+                      Split on: attr 12 value n   (count 2 )
+                       Leaf: class is d count 0
+                       Split on: attr 13 value n   (count 2 )
+                        Leaf: class is d count 1
+                        Leaf: class is not-d count 1
+                     Split on: attr 11 value n   (count 9 )
+                      Leaf: class is not-d count 6
+                      Split on: attr 12 value n   (count 3 )
+                       Split on: attr 13 value n   (count 2 )
+                        Leaf: class is d count 0
+                        Split on: attr 14 value n   (count 2 )
+                         Leaf: class is not-d count 1
+                         Leaf: class is d count 1
+                       Leaf: class is not-d count 1
+
+
+Test Results:
+There are 87 examples in the training data.
+There are 105 rules in the decision tree.
+There is an average of 0.83 examples per rule.
+85.22 percent of not-class examples were classified correctly (98/115)
+84.98 percent of class examples were classified correctly (198/233)
+85.06 percent of all the data were classified correctly (296/348)

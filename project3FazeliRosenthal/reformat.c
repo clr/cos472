@@ -74,9 +74,9 @@ void snipShroom( MushroomP shroom, MushroomP list );
 int classifyMushroom( DecisionP decisionTree, MushroomP shroom );
 void freeMushrooms( MushroomP mushroomList );
 
-DecisionP createDecisionTree( MushroomP shroomList, ValueP availableValues );
+DecisionP createDecisionTree( char letter, int attribute, MushroomP shroomList, ValueP availableValues );
 DecisionP createLeafNode( int isClass, int mushroomCount );
-DecisionP createSplitNode( ValueP splitValue, MushroomP positiveShrooms, MushroomP negativeShrooms, ValueP availableValues, int mushroomCount );
+DecisionP createSplitNode( char letter, int attribute, ValueP splitValue, MushroomP positiveShrooms, MushroomP negativeShrooms, ValueP availableValues, int mushroomCount );
 DecisionP newDecision( );
 void printDecisionTree( DecisionP decisionTree, char letter[STRLEN], char outfilename[STRLEN] );
 void printDecision( FILE * outfile, char letter[STRLEN], DecisionP decisionTree, int tab );
@@ -117,6 +117,10 @@ int main(int argc, char* argv[]) {
   char infilenameTesting[STRLEN]; /* input file name for testing data */
   char outfilename[STRLEN]; /* output file name for printing the results */
   int trainingShroomCount;
+  ValueP nonClassAvailableValues; /* available values minus the 0-attribute */
+  ValueP valueIterate;
+  nonClassAvailableValues = NULL;
+  valueIterate = NULL;
 
   printf( "This program processes data about the attributes mushrooms.\n" );
   
@@ -151,11 +155,27 @@ int main(int argc, char* argv[]) {
 
   availableValues = findAvailableValues( trainingShroomList );
 
-  decisionTree = createDecisionTree( trainingShroomList, availableValues );
+  /* remove the 0-attribute from our attributes to check for splitting on */
+  nonClassAvailableValues = cloneValues( availableValues );
+  /* fast-forward to a non-0 attribute */
+  while( nonClassAvailableValues->attribute == availableValues->attribute ){
+    nonClassAvailableValues = nonClassAvailableValues->next;
+  }
+  /* strip out the 0s */
+  valueIterate = nonClassAvailableValues;
+  while( valueIterate->next ){
+    if( valueIterate->next->attribute == availableValues->attribute ){
+      valueIterate->next = valueIterate->next->next;
+    }
+    valueIterate = valueIterate->next;
+  }
+
+  /* seed the tree looking for the first value to classify */
+  decisionTree = createDecisionTree( availableValues->letter, availableValues->attribute, trainingShroomList, nonClassAvailableValues );
  
  // printDecisionTree( decisionTree, &availableValues->letter, outfilename );
  
-  printTestResults( availableValues->letter, 0, decisionTree, trainingShroomCount, testingShroomList, outfilename );
+  printTestResults( availableValues->letter, availableValues->attribute, decisionTree, trainingShroomCount, testingShroomList, outfilename );
  
   /* free the list of test mushrooms */
   freeMushrooms( trainingShroomList );
@@ -351,7 +371,7 @@ void snipShroom( MushroomP shroom, MushroomP list ){
   @param {char, int, MushroomP, ValueP} letter, attribute, shroomList, availableValues
   @return {DecisionP}
  *****************************************************************************/
-DecisionP createDecisionTree( MushroomP shroomList, ValueP availableValues ){
+DecisionP createDecisionTree( char letter, int attribute, MushroomP shroomList, ValueP availableValues ){
   MushroomP shroomIterate;
   shroomIterate = NULL;
   MushroomP shroom;
@@ -368,7 +388,7 @@ DecisionP createDecisionTree( MushroomP shroomList, ValueP availableValues ){
   /* find the number of class in this list (edible count) */
   shroomIterate = shroomList;
   while( shroomIterate ){
-    if( shroomIterate->attributes[ 0 ] == availableValues->letter ){
+    if( shroomIterate->attributes[ attribute ] == letter ){
       edibleCount++;
     }
     shroomCount++;
@@ -390,8 +410,8 @@ DecisionP createDecisionTree( MushroomP shroomList, ValueP availableValues ){
     return createLeafNode( 0, shroomCount );
   }
  
-  /* choose a value on which to split; for now, we just pick the next in the
-   * list and unshift it off the stack */
+  /* choose a value on which to split */
+  /* we have three functions to choose from: highest gain, alphabetical, and X */
   splitValue = findAlphabetical( availableValues );
   //splitValue = findHighestGain( letter, attribute, availableValues, shroomList );
  
@@ -405,11 +425,10 @@ DecisionP createDecisionTree( MushroomP shroomList, ValueP availableValues ){
     } else {
       negativeShroomList = appendMushroom( negativeShroomList, shroom );
     }
- 
     shroom = shroomIterate;
   }
  
-  return createSplitNode( splitValue, positiveShroomList, negativeShroomList, availableValues, shroomCount );
+  return createSplitNode( letter, attribute, splitValue, positiveShroomList, negativeShroomList, availableValues, shroomCount );
 } /* end createDecisionTree */
  
  
@@ -436,15 +455,15 @@ DecisionP createLeafNode( int isClass, int mushroomCount ){
   @param {ValueP, char, int, MushroomP, MushroomP, ValueP} splitValue, letter, attribute, positiveShrooms, negativeShrooms, availableValues
   @return {DecisionP} pointer to the split for attaching to the parent node
  *****************************************************************************/
-DecisionP createSplitNode( ValueP splitValue, MushroomP positiveShrooms, MushroomP negativeShrooms, ValueP availableValues, int mushroomCount ){
+DecisionP createSplitNode( char letter, int attribute, ValueP splitValue, MushroomP positiveShrooms, MushroomP negativeShrooms, ValueP availableValues, int mushroomCount ){
   DecisionP decision;
   decision = newDecision();
  
   decision->isLeaf = 0;
   decision->splitValue = splitValue;
   decision->mushroomCount = mushroomCount;
-  decision->left = createDecisionTree( positiveShrooms, cloneValues( availableValues ) );
-  decision->right = createDecisionTree( negativeShrooms, cloneValues( availableValues ) );
+  decision->left = createDecisionTree( letter, attribute, positiveShrooms, cloneValues( availableValues ) );
+  decision->right = createDecisionTree( letter, attribute, negativeShrooms, cloneValues( availableValues ) );
  
   return decision;
 }
@@ -659,7 +678,7 @@ ValueP findHighestGain( char letter, int attribute, ValueP valueList, MushroomP 
     leftEntropy = calculateEntropy( leftEdible, leftCount );
     rightEntropy = calculateEntropy( rightEdible, rightCount ); 
       
-    gain = currentEntropy - (float)( leftCount / shroomCount ) * leftEntropy - (float)( rightCount / shroomCount ) * rightEntropy;
+    gain = (float)currentEntropy - ( (float)leftCount / (float)shroomCount ) * (float)leftEntropy - ( (float)rightCount / (float)shroomCount ) * (float)rightEntropy;
     if( gain > maxGain ){
       maxGain = gain;
       highestGainValue = valueIterate;
@@ -692,16 +711,16 @@ ValueP findAlphabetical( ValueP valueList ){
   ValueP splitValue;
       
   splitValue = valueIterate;
-  /* go through each available attribute, and calculate the gain of each, but
-   * only retain the highest value */
+  /* go through each available attribute, and set it to the splitValue if it
+   * is less than the previous value */
   while( valueIterate != NULL ){
-	  if( splitValue->letter > valueIterate->letter ){
+	  if( valueIterate->letter < splitValue->letter ){
 		  splitValue = valueIterate;
 	  }
 	  valueIterate = valueIterate->next;
   }
 
-  /* pop out the splitValue and return it */
+  /* pop out the splitValue from the list and then return it */
   valueIterate = valueList;
   while( valueIterate != NULL ){
     if( valueIterate->next == splitValue ){
@@ -728,10 +747,10 @@ float calculateEntropy( int classCount, int shroomCount ){
     return( 0.0 );
   }
  
-  classPercent = (float)( classCount ) / shroomCount;
-  nonClassPercent = (float)( shroomCount - classCount ) / shroomCount;
+  classPercent = (float)classCount / (float)shroomCount;
+  nonClassPercent = ( (float)shroomCount - (float)classCount ) / (float)shroomCount;
   
-  if( ( classPercent == 0 ) || ( nonClassPercent == 0 ) ){
+  if( ( classPercent == 0.0 ) || ( nonClassPercent == 0.0 ) ){
     return( 0.0 );
   }
  
@@ -877,7 +896,7 @@ void printTestResults( char letter, int attribute, DecisionP decisionTree, int t
   }
  
   /* open the output file for writing */
-  openFile( &outfile, outfilename, "a" );
+  openFile( &outfile, outfilename, "w" );
  
   printDecision( outfile, &letter, decisionTree, 0 );
   decisionCount = freeDecisions( decisionTree );
@@ -885,12 +904,12 @@ void printTestResults( char letter, int attribute, DecisionP decisionTree, int t
   fprintf( outfile, "There are %d examples in the training data.\n", trainingShroomCount );
   fprintf( outfile, "There are %d rules in the decision tree.\n", decisionCount );
   fprintf( outfile, "There is an average of %3.2f examples per rule.\n", ( (float)trainingShroomCount / decisionCount ) );
-  fprintf( outfile, "%3.2f percent of n examples were classified correctly (%d/%d)\n", 
+  fprintf( outfile, "%3.2f percent of not-class examples were classified correctly (%d/%d)\n", 
     ( (float)negativeCorrectCount * 100 / classifyNegativeCount ),
     negativeCorrectCount,
     classifyNegativeCount
   );
-  fprintf( outfile, "%3.2f percent of p examples were classified correctly (%d/%d)\n", 
+  fprintf( outfile, "%3.2f percent of class examples were classified correctly (%d/%d)\n", 
     ( (float)positiveCorrectCount * 100 / classifyPositiveCount ),
     positiveCorrectCount,
     classifyPositiveCount

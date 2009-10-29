@@ -1,0 +1,248 @@
+Split on: attr 15 value ?   (count 87 )
+ Split on: attr 7 value ?   (count 7 )
+  Split on: attr 8 value ?   (count 2 )
+   Split on: attr 11 value ?   (count 2 )
+    Split on: attr 12 value ?   (count 2 )
+     Split on: attr 14 value ?   (count 2 )
+      Split on: attr 16 value ?   (count 2 )
+       Split on: attr 13 value ?   (count 2 )
+        Leaf: class is not-r count 1
+        Leaf: class is r count 1
+       Leaf: class is r count 0
+      Leaf: class is r count 0
+     Leaf: class is r count 0
+    Leaf: class is r count 0
+   Leaf: class is r count 0
+  Split on: attr 8 value ?   (count 5 )
+   Leaf: class is r count 0
+   Split on: attr 11 value ?   (count 5 )
+    Leaf: class is r count 0
+    Split on: attr 12 value ?   (count 5 )
+     Leaf: class is r count 0
+     Split on: attr 14 value ?   (count 5 )
+      Leaf: class is r count 0
+      Split on: attr 16 value ?   (count 5 )
+       Leaf: class is r count 0
+       Split on: attr 13 value ?   (count 5 )
+        Leaf: class is r count 0
+        Split on: attr 2 value ?   (count 5 )
+         Leaf: class is r count 0
+         Split on: attr 1 value ?   (count 5 )
+          Leaf: class is r count 0
+          Split on: attr 3 value ?   (count 5 )
+           Leaf: class is r count 0
+           Split on: attr 4 value ?   (count 5 )
+            Leaf: class is not-r count 1
+            Split on: attr 5 value ?   (count 4 )
+             Leaf: class is r count 0
+             Split on: attr 6 value ?   (count 4 )
+              Leaf: class is r count 0
+              Split on: attr 10 value ?   (count 4 )
+               Leaf: class is r count 0
+               Split on: attr 9 value ?   (count 4 )
+                Leaf: class is r count 0
+                Split on: attr 2 value n   (count 4 )
+                 Split on: attr 3 value n   (count 4 )
+                  Leaf: class is r count 2
+                  Leaf: class is not-r count 2
+                 Leaf: class is r count 0
+ Split on: attr 7 value ?   (count 80 )
+  Leaf: class is not-r count 1
+  Split on: attr 8 value ?   (count 79 )
+   Leaf: class is r count 0
+   Split on: attr 11 value ?   (count 79 )
+    Split on: attr 12 value ?   (count 5 )
+     Split on: attr 14 value ?   (count 2 )
+      Leaf: class is r count 0
+      Split on: attr 16 value ?   (count 2 )
+       Leaf: class is r count 0
+       Split on: attr 13 value ?   (count 2 )
+        Leaf: class is r count 1
+        Leaf: class is not-r count 1
+     Split on: attr 14 value ?   (count 3 )
+      Leaf: class is r count 0
+      Split on: attr 16 value ?   (count 3 )
+       Leaf: class is not-r count 1
+       Split on: attr 13 value ?   (count 2 )
+        Leaf: class is r count 0
+        Split on: attr 2 value ?   (count 2 )
+         Leaf: class is r count 0
+         Split on: attr 1 value ?   (count 2 )
+          Leaf: class is r count 0
+          Split on: attr 3 value ?   (count 2 )
+           Leaf: class is r count 0
+           Split on: attr 4 value ?   (count 2 )
+            Leaf: class is r count 0
+            Split on: attr 5 value ?   (count 2 )
+             Leaf: class is r count 0
+             Split on: attr 6 value ?   (count 2 )
+              Leaf: class is r count 0
+              Split on: attr 10 value ?   (count 2 )
+               Leaf: class is r count 0
+               Split on: attr 9 value ?   (count 2 )
+                Leaf: class is r count 0
+                Split on: attr 2 value n   (count 2 )
+                 Split on: attr 3 value n   (count 2 )
+                  Leaf: class is r count 1
+                  Leaf: class is not-r count 1
+                 Leaf: class is r count 0
+    Split on: attr 12 value ?   (count 74 )
+     Split on: attr 14 value ?   (count 5 )
+      Leaf: class is r count 0
+      Split on: attr 16 value ?   (count 5 )
+       Leaf: class is not-r count 2
+       Split on: attr 13 value ?   (count 3 )
+        Leaf: class is r count 0
+        Split on: attr 2 value ?   (count 3 )
+         Leaf: class is r count 0
+         Split on: attr 1 value ?   (count 3 )
+          Leaf: class is r count 0
+          Split on: attr 3 value ?   (count 3 )
+           Leaf: class is r count 0
+           Split on: attr 4 value ?   (count 3 )
+            Leaf: class is r count 0
+            Split on: attr 5 value ?   (count 3 )
+             Leaf: class is r count 0
+             Split on: attr 6 value ?   (count 3 )
+              Leaf: class is r count 0
+              Split on: attr 10 value ?   (count 3 )
+               Leaf: class is r count 0
+               Split on: attr 9 value ?   (count 3 )
+                Leaf: class is r count 0
+                Split on: attr 2 value n   (count 3 )
+                 Leaf: class is r count 1
+                 Split on: attr 3 value n   (count 2 )
+                  Leaf: class is r count 1
+                  Leaf: class is not-r count 1
+     Split on: attr 14 value ?   (count 69 )
+      Leaf: class is r count 0
+      Split on: attr 16 value ?   (count 69 )
+       Split on: attr 13 value ?   (count 11 )
+        Leaf: class is r count 0
+        Split on: attr 2 value ?   (count 11 )
+         Leaf: class is not-r count 1
+         Split on: attr 1 value ?   (count 10 )
+          Leaf: class is r count 0
+          Split on: attr 3 value ?   (count 10 )
+           Leaf: class is r count 0
+           Split on: attr 4 value ?   (count 10 )
+            Leaf: class is r count 0
+            Split on: attr 5 value ?   (count 10 )
+             Leaf: class is r count 0
+             Split on: attr 6 value ?   (count 10 )
+              Leaf: class is r count 0
+              Split on: attr 10 value ?   (count 10 )
+               Leaf: class is r count 0
+               Split on: attr 9 value ?   (count 10 )
+                Leaf: class is not-r count 1
+                Split on: attr 2 value n   (count 9 )
+                 Split on: attr 3 value n   (count 7 )
+                  Leaf: class is r count 0
+                  Split on: attr 6 value n   (count 7 )
+                   Leaf: class is not-r count 6
+                   Leaf: class is r count 1
+                 Split on: attr 3 value n   (count 2 )
+                  Leaf: class is r count 1
+                  Leaf: class is not-r count 1
+       Split on: attr 13 value ?   (count 58 )
+        Leaf: class is not-r count 2
+        Split on: attr 2 value ?   (count 56 )
+         Split on: attr 1 value ?   (count 6 )
+          Leaf: class is r count 0
+          Split on: attr 3 value ?   (count 6 )
+           Leaf: class is r count 0
+           Split on: attr 4 value ?   (count 6 )
+            Leaf: class is r count 0
+            Split on: attr 5 value ?   (count 6 )
+             Leaf: class is r count 0
+             Split on: attr 6 value ?   (count 6 )
+              Leaf: class is r count 0
+              Split on: attr 10 value ?   (count 6 )
+               Leaf: class is r count 0
+               Split on: attr 9 value ?   (count 6 )
+                Leaf: class is r count 0
+                Split on: attr 2 value n   (count 6 )
+                 Leaf: class is r count 0
+                 Split on: attr 3 value n   (count 6 )
+                  Leaf: class is r count 4
+                  Leaf: class is not-r count 2
+         Split on: attr 1 value ?   (count 50 )
+          Leaf: class is r count 0
+          Split on: attr 3 value ?   (count 50 )
+           Leaf: class is not-r count 1
+           Split on: attr 4 value ?   (count 49 )
+            Leaf: class is r count 0
+            Split on: attr 5 value ?   (count 49 )
+             Leaf: class is r count 0
+             Split on: attr 6 value ?   (count 49 )
+              Leaf: class is not-r count 1
+              Split on: attr 10 value ?   (count 48 )
+               Leaf: class is r count 0
+               Split on: attr 9 value ?   (count 48 )
+                Leaf: class is r count 0
+                Split on: attr 2 value n   (count 48 )
+                 Split on: attr 3 value n   (count 25 )
+                  Split on: attr 6 value n   (count 14 )
+                   Split on: attr 10 value n   (count 5 )
+                    Leaf: class is r count 3
+                    Split on: attr 11 value n   (count 2 )
+                     Split on: attr 15 value n   (count 2 )
+                      Leaf: class is r count 1
+                      Leaf: class is not-r count 1
+                     Leaf: class is r count 0
+                   Split on: attr 10 value n   (count 9 )
+                    Split on: attr 11 value n   (count 5 )
+                     Leaf: class is r count 4
+                     Leaf: class is not-r count 1
+                    Leaf: class is r count 4
+                  Split on: attr 6 value n   (count 11 )
+                   Split on: attr 10 value n   (count 7 )
+                    Leaf: class is not-r count 3
+                    Split on: attr 11 value n   (count 4 )
+                     Split on: attr 15 value n   (count 2 )
+                      Leaf: class is r count 1
+                      Leaf: class is not-r count 1
+                     Leaf: class is not-r count 2
+                   Split on: attr 10 value n   (count 4 )
+                    Leaf: class is not-r count 2
+                    Split on: attr 11 value n   (count 2 )
+                     Leaf: class is r count 0
+                     Split on: attr 15 value n   (count 2 )
+                      Leaf: class is r count 1
+                      Leaf: class is not-r count 1
+                 Split on: attr 3 value n   (count 23 )
+                  Split on: attr 6 value n   (count 10 )
+                   Leaf: class is r count 0
+                   Split on: attr 10 value n   (count 10 )
+                    Split on: attr 11 value n   (count 6 )
+                     Leaf: class is r count 3
+                     Split on: attr 15 value n   (count 3 )
+                      Split on: attr 1 value n   (count 3 )
+                       Split on: attr 4 value n   (count 2 )
+                        Leaf: class is r count 0
+                        Split on: attr 5 value n   (count 2 )
+                         Leaf: class is r count 0
+                         Split on: attr 12 value n   (count 2 )
+                          Leaf: class is r count 0
+                          Split on: attr 13 value n   (count 2 )
+                           Leaf: class is not-r count 1
+                           Leaf: class is r count 1
+                       Leaf: class is r count 1
+                      Leaf: class is r count 0
+                    Leaf: class is r count 4
+                  Split on: attr 6 value n   (count 13 )
+                   Split on: attr 10 value n   (count 10 )
+                    Leaf: class is not-r count 7
+                    Split on: attr 11 value n   (count 3 )
+                     Leaf: class is not-r count 2
+                     Leaf: class is r count 1
+                   Leaf: class is not-r count 3
+
+
+Test Results:
+There are 87 examples in the training data.
+There are 120 rules in the decision tree.
+There is an average of 0.73 examples per rule.
+86.34 percent of not-class examples were classified correctly (139/161)
+58.29 percent of class examples were classified correctly (109/187)
+71.26 percent of all the data were classified correctly (248/348)

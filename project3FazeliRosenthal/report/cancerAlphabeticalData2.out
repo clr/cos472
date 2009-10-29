@@ -1,0 +1,138 @@
+Split on: attr 3 value ,   (count 139 )
+ Leaf: class is 4 count 16
+ Split on: attr 7 value ,   (count 123 )
+  Split on: attr 8 value ,   (count 12 )
+   Split on: attr 9 value ,   (count 12 )
+    Split on: attr 2 value ,   (count 10 )
+     Leaf: class is 4 count 2
+     Split on: attr 4 value ,   (count 8 )
+      Leaf: class is 4 count 0
+      Split on: attr 5 value ,   (count 8 )
+       Leaf: class is 4 count 0
+       Split on: attr 6 value ,   (count 8 )
+        Leaf: class is not-4 count 1
+        Leaf: class is 4 count 7
+    Leaf: class is 4 count 2
+   Leaf: class is 4 count 0
+  Split on: attr 8 value ,   (count 111 )
+   Leaf: class is 4 count 1
+   Split on: attr 9 value ,   (count 110 )
+    Leaf: class is 4 count 3
+    Split on: attr 2 value ,   (count 107 )
+     Leaf: class is 4 count 1
+     Split on: attr 4 value ,   (count 106 )
+      Leaf: class is 4 count 1
+      Split on: attr 5 value ,   (count 105 )
+       Leaf: class is 4 count 1
+       Split on: attr 6 value ,   (count 104 )
+        Leaf: class is 4 count 1
+        Split on: attr 4 value 0   (count 103 )
+         Leaf: class is 4 count 0
+         Split on: attr 8 value 0   (count 103 )
+          Leaf: class is 4 count 0
+          Split on: attr 9 value 0   (count 103 )
+           Leaf: class is 4 count 0
+           Split on: attr 7 value 0   (count 103 )
+            Leaf: class is 4 count 0
+            Split on: attr 6 value 0   (count 103 )
+             Leaf: class is 4 count 0
+             Split on: attr 3 value 0   (count 103 )
+              Leaf: class is 4 count 0
+              Split on: attr 5 value 0   (count 103 )
+               Leaf: class is 4 count 0
+               Split on: attr 2 value 1   (count 103 )
+                Split on: attr 6 value 1   (count 81 )
+                 Leaf: class is not-4 count 72
+                 Split on: attr 1 value 1   (count 9 )
+                  Leaf: class is not-4 count 3
+                  Split on: attr 3 value 1   (count 6 )
+                   Split on: attr 4 value 1   (count 5 )
+                    Leaf: class is not-4 count 2
+                    Split on: attr 9 value 1   (count 3 )
+                     Split on: attr 8 value 1   (count 3 )
+                      Split on: attr 5 value 1   (count 3 )
+                       Leaf: class is 4 count 1
+                       Leaf: class is not-4 count 2
+                      Leaf: class is 4 count 0
+                     Leaf: class is 4 count 0
+                   Leaf: class is not-4 count 1
+                Split on: attr 6 value 1   (count 22 )
+                 Leaf: class is not-4 count 7
+                 Split on: attr 1 value 1   (count 15 )
+                  Leaf: class is not-4 count 1
+                  Split on: attr 3 value 1   (count 14 )
+                   Leaf: class is not-4 count 1
+                   Split on: attr 4 value 1   (count 13 )
+                    Split on: attr 9 value 1   (count 4 )
+                     Split on: attr 8 value 1   (count 3 )
+                      Leaf: class is not-4 count 1
+                      Split on: attr 5 value 1   (count 2 )
+                       Leaf: class is 4 count 0
+                       Split on: attr 7 value 1   (count 2 )
+                        Leaf: class is 4 count 0
+                        Split on: attr 5 value 2   (count 2 )
+                         Split on: attr 7 value 2   (count 2 )
+                          Leaf: class is 4 count 0
+                          Split on: attr 2 value 2   (count 2 )
+                           Leaf: class is 4 count 0
+                           Split on: attr 3 value 2   (count 2 )
+                            Leaf: class is 4 count 0
+                            Split on: attr 4 value 2   (count 2 )
+                             Leaf: class is 4 count 0
+                             Split on: attr 6 value 2   (count 2 )
+                              Leaf: class is not-4 count 1
+                              Leaf: class is 4 count 1
+                         Leaf: class is 4 count 0
+                     Leaf: class is 4 count 1
+                    Split on: attr 9 value 1   (count 9 )
+                     Split on: attr 8 value 1   (count 7 )
+                      Leaf: class is 4 count 1
+                      Split on: attr 5 value 1   (count 6 )
+                       Leaf: class is 4 count 0
+                       Split on: attr 7 value 1   (count 6 )
+                        Leaf: class is 4 count 0
+                        Split on: attr 5 value 2   (count 6 )
+                         Leaf: class is 4 count 1
+                         Split on: attr 7 value 2   (count 5 )
+                          Leaf: class is 4 count 0
+                          Split on: attr 2 value 2   (count 5 )
+                           Leaf: class is 4 count 1
+                           Split on: attr 3 value 2   (count 4 )
+                            Leaf: class is 4 count 0
+                            Split on: attr 4 value 2   (count 4 )
+                             Leaf: class is 4 count 0
+                             Split on: attr 6 value 2   (count 4 )
+                              Leaf: class is 4 count 0
+                              Split on: attr 8 value 2   (count 4 )
+                               Leaf: class is 4 count 0
+                               Split on: attr 9 value 2   (count 4 )
+                                Leaf: class is 4 count 0
+                                Split on: attr 1 value 2   (count 4 )
+                                 Leaf: class is 4 count 0
+                                 Split on: attr 8 value 3   (count 4 )
+                                  Leaf: class is 4 count 0
+                                  Split on: attr 1 value 3   (count 4 )
+                                   Split on: attr 5 value 3   (count 2 )
+                                    Leaf: class is 4 count 0
+                                    Split on: attr 7 value 3   (count 2 )
+                                     Leaf: class is 4 count 0
+                                     Split on: attr 2 value 3   (count 2 )
+                                      Leaf: class is 4 count 0
+                                      Split on: attr 3 value 3   (count 2 )
+                                       Leaf: class is 4 count 0
+                                       Split on: attr 4 value 3   (count 2 )
+                                        Leaf: class is not-4 count 1
+                                        Leaf: class is 4 count 1
+                                   Split on: attr 5 value 3   (count 2 )
+                                    Leaf: class is 4 count 1
+                                    Leaf: class is not-4 count 1
+                     Leaf: class is 4 count 2
+
+
+Test Results:
+There are 139 examples in the training data.
+There are 65 rules in the decision tree.
+There is an average of 2.14 examples per rule.
+97.73 percent of not-class examples were classified correctly (345/353)
+90.82 percent of class examples were classified correctly (188/207)
+95.18 percent of all the data were classified correctly (533/560)
