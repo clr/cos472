@@ -1,0 +1,44 @@
+Split on: attr 9 value 1   (count 139 )
+ Split on: attr 2 value 1   (count 104 )
+  Split on: attr 6 value 1   (count 92 )
+   Leaf: class is not-4 count 76
+   Split on: attr 8 value 1   (count 16 )
+    Leaf: class is not-4 count 10
+    Split on: attr 4 value 1   (count 6 )
+     Leaf: class is not-4 count 1
+     Leaf: class is 4 count 5
+  Split on: attr 6 value 1   (count 12 )
+   Leaf: class is not-4 count 7
+   Split on: attr 8 value 1   (count 5 )
+    Split on: attr 4 value 1   (count 3 )
+     Leaf: class is 4 count 0
+     Split on: attr 5 value 2   (count 3 )
+      Leaf: class is not-4 count 2
+      Leaf: class is 4 count 1
+    Leaf: class is 4 count 2
+ Split on: attr 2 value 1   (count 35 )
+  Split on: attr 6 value 1   (count 4 )
+   Split on: attr 8 value 1   (count 2 )
+    Leaf: class is not-4 count 1
+    Leaf: class is 4 count 1
+   Leaf: class is 4 count 2
+  Split on: attr 6 value 1   (count 31 )
+   Split on: attr 8 value 1   (count 11 )
+    Leaf: class is not-4 count 1
+    Leaf: class is 4 count 10
+   Split on: attr 8 value 1   (count 20 )
+    Leaf: class is 4 count 2
+    Split on: attr 4 value 1   (count 18 )
+     Leaf: class is 4 count 5
+     Split on: attr 5 value 2   (count 13 )
+      Leaf: class is not-4 count 1
+      Leaf: class is 4 count 12
+
+
+Test Results:
+There are 139 examples in the training data.
+There are 18 rules in the decision tree.
+There is an average of 7.72 examples per rule.
+98.23 percent of not-class examples were classified correctly (333/339)
+88.24 percent of class examples were classified correctly (195/221)
+94.29 percent of all the data were classified correctly (528/560)

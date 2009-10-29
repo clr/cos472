@@ -1,0 +1,76 @@
+Split on: attr 6 value 1   (count 139 )
+ Split on: attr 9 value 1   (count 90 )
+  Split on: attr 8 value 1   (count 72 )
+   Leaf: class is 2 count 64
+   Split on: attr 5 value 2   (count 8 )
+    Leaf: class is 2 count 6
+    Split on: attr 2 value 1   (count 2 )
+     Split on: attr 4 value 1   (count 2 )
+      Leaf: class is 2 count 0
+      Split on: attr 3 value 1   (count 2 )
+       Leaf: class is 2 count 1
+       Leaf: class is not-2 count 1
+     Leaf: class is 2 count 0
+  Split on: attr 8 value 1   (count 18 )
+   Leaf: class is 2 count 0
+   Split on: attr 5 value 2   (count 18 )
+    Split on: attr 2 value 1   (count 3 )
+     Leaf: class is 2 count 1
+     Leaf: class is not-2 count 2
+    Leaf: class is not-2 count 15
+ Split on: attr 9 value 1   (count 49 )
+  Split on: attr 8 value 1   (count 17 )
+   Split on: attr 5 value 2   (count 10 )
+    Split on: attr 2 value 1   (count 8 )
+     Leaf: class is 2 count 6
+     Split on: attr 4 value 1   (count 2 )
+      Leaf: class is 2 count 0
+      Split on: attr 3 value 1   (count 2 )
+       Leaf: class is 2 count 0
+       Split on: attr 1 value 1   (count 2 )
+        Leaf: class is 2 count 0
+        Split on: attr 7 value 1   (count 2 )
+         Leaf: class is 2 count 0
+         Split on: attr 8 value ,   (count 2 )
+          Leaf: class is 2 count 0
+          Split on: attr 9 value ,   (count 2 )
+           Leaf: class is 2 count 0
+           Split on: attr 7 value 2   (count 2 )
+            Leaf: class is 2 count 1
+            Leaf: class is not-2 count 1
+    Leaf: class is not-2 count 2
+   Split on: attr 5 value 2   (count 7 )
+    Leaf: class is not-2 count 1
+    Split on: attr 2 value 1   (count 6 )
+     Leaf: class is not-2 count 2
+     Split on: attr 4 value 1   (count 4 )
+      Leaf: class is 2 count 1
+      Split on: attr 3 value 1   (count 3 )
+       Leaf: class is 2 count 0
+       Split on: attr 1 value 1   (count 3 )
+        Leaf: class is not-2 count 1
+        Split on: attr 7 value 1   (count 2 )
+         Leaf: class is 2 count 0
+         Split on: attr 8 value ,   (count 2 )
+          Leaf: class is 2 count 0
+          Split on: attr 9 value ,   (count 2 )
+           Leaf: class is 2 count 0
+           Split on: attr 7 value 2   (count 2 )
+            Leaf: class is 2 count 0
+            Split on: attr 7 value ,   (count 2 )
+             Leaf: class is 2 count 0
+             Split on: attr 1 value 5   (count 2 )
+              Leaf: class is 2 count 0
+              Split on: attr 7 value 3   (count 2 )
+               Leaf: class is 2 count 1
+               Leaf: class is not-2 count 1
+  Leaf: class is not-2 count 32
+
+
+Test Results:
+There are 139 examples in the training data.
+There are 34 rules in the decision tree.
+There is an average of 4.09 examples per rule.
+82.78 percent of not-class examples were classified correctly (173/209)
+97.15 percent of class examples were classified correctly (341/351)
+91.79 percent of all the data were classified correctly (514/560)

@@ -1,0 +1,56 @@
+Split on: attr 6 value y   (count 87 )
+ Split on: attr 11 value n   (count 57 )
+  Split on: attr 14 value y   (count 35 )
+   Split on: attr 3 value y   (count 29 )
+    Split on: attr 16 value y   (count 7 )
+     Split on: attr 4 value n   (count 5 )
+      Leaf: class is not-r count 4
+      Leaf: class is r count 1
+     Leaf: class is not-r count 2
+    Leaf: class is r count 22
+   Split on: attr 3 value y   (count 6 )
+    Leaf: class is not-r count 5
+    Leaf: class is r count 1
+  Split on: attr 14 value y   (count 22 )
+   Split on: attr 3 value y   (count 16 )
+    Leaf: class is not-r count 9
+    Split on: attr 16 value y   (count 7 )
+     Leaf: class is r count 3
+     Leaf: class is not-r count 4
+   Split on: attr 3 value y   (count 6 )
+    Leaf: class is not-r count 3
+    Split on: attr 16 value y   (count 3 )
+     Split on: attr 4 value n   (count 2 )
+      Leaf: class is not-r count 1
+      Leaf: class is r count 1
+     Leaf: class is r count 1
+ Split on: attr 11 value n   (count 30 )
+  Split on: attr 14 value y   (count 19 )
+   Split on: attr 3 value y   (count 4 )
+    Leaf: class is not-r count 2
+    Split on: attr 16 value y   (count 2 )
+     Split on: attr 4 value n   (count 2 )
+      Leaf: class is not-r count 1
+      Leaf: class is r count 1
+     Leaf: class is r count 0
+   Leaf: class is not-r count 15
+  Split on: attr 14 value y   (count 11 )
+   Split on: attr 3 value y   (count 3 )
+    Split on: attr 16 value y   (count 2 )
+     Split on: attr 4 value n   (count 2 )
+      Leaf: class is not-r count 1
+      Leaf: class is r count 1
+     Leaf: class is r count 0
+    Leaf: class is r count 1
+   Split on: attr 3 value y   (count 8 )
+    Leaf: class is not-r count 7
+    Leaf: class is r count 1
+
+
+Test Results:
+There are 87 examples in the training data.
+There are 24 rules in the decision tree.
+There is an average of 3.62 examples per rule.
+90.95 percent of not-class examples were classified correctly (191/210)
+84.06 percent of class examples were classified correctly (116/138)
+88.22 percent of all the data were classified correctly (307/348)

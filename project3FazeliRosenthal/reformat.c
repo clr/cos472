@@ -93,6 +93,7 @@ void freeValues( ValueP value );
 float calculateEntropy( int classCount, int shroomCount );
 ValueP findHighestGain( char letter, int attribute, ValueP valueList, MushroomP shroomList );
 ValueP findAlphabetical( ValueP valueList );
+ValueP findFattest( ValueP valueList );
 float logTwo( float value );
  
 void *emalloc( long size );
@@ -411,10 +412,11 @@ DecisionP createDecisionTree( char letter, int attribute, MushroomP shroomList, 
   }
  
   /* choose a value on which to split */
-  /* we have three functions to choose from: highest gain, alphabetical, and X */
-  splitValue = findAlphabetical( availableValues );
+  /* we have three functions to choose from: highest gain, alphabetical, and fattest */
+  //splitValue = findAlphabetical( availableValues );
   //splitValue = findHighestGain( letter, attribute, availableValues, shroomList );
- 
+  splitValue = findFattest( availableValues );
+
   /* go through the mushroom list, and sort them into one list or the other */
   shroom = shroomList;
   while( shroom ){
@@ -699,7 +701,7 @@ ValueP findHighestGain( char letter, int attribute, ValueP valueList, MushroomP 
 }
 
 /*****************************************************************************
-  Sort the values alphabetically and pick the next one and pop it out of 
+  Iterate the values, choose the lowest alphabetically,  and pop it out of 
   the list.
   
   @param { ValueP } valueList
@@ -732,6 +734,42 @@ ValueP findAlphabetical( ValueP valueList ){
   return( splitValue );
 
 }
+
+/*****************************************************************************
+  Iterate the values, find the one representative of the most items in the
+  original data set, and pop it out of the list.
+  
+  @param { ValueP } valueList
+  @return { ValueP } splitValue
+ *********************************************************************************/
+ValueP findFattest( ValueP valueList ){
+  ValueP valueIterate;
+  valueIterate = valueList;
+  ValueP splitValue;
+      
+  splitValue = valueIterate;
+  /* go through each available attribute, and set it to the splitValue if it
+   * is less than the previous value */
+  while( valueIterate != NULL ){
+	  if( valueIterate->count > splitValue->count ){
+		  splitValue = valueIterate;
+	  }
+	  valueIterate = valueIterate->next;
+  }
+
+  /* pop out the splitValue from the list and then return it */
+  valueIterate = valueList;
+  while( valueIterate != NULL ){
+    if( valueIterate->next == splitValue ){
+      valueIterate->next = splitValue->next;
+      break;
+    }
+    valueIterate = valueIterate->next;
+  }
+  return( splitValue );
+
+}
+
 /************************************************************************************
   Using an information storage function, calculate the 'entropy' of a Value.
  
