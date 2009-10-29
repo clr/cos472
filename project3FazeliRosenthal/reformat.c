@@ -5,17 +5,36 @@
  File:   reformat.c
  
  Description:
- Read mushroom data from a file, reformat the data into a decision tree,
- and print this back out to a new file.
+	This program reads the training data from the specified input file into
+ a linked list in the root node of the decision tree, 
+	uses highest information gain, Alpphabatical or a function picks the 
+'fattest' value (the one that represents the most mushrooms).
+	to determine which attribute-value pair to split on, the program does 
+not use the class	attribute (the one we are trying to
+	predict) for splitting. Then split the linked list into two sublists, 
+according to the attribute-value pair chosen above and 
+	create right and left offspring nodes, one with each of the linked 
+lists. Recurse with each offspring node. The stopping criteria
+	is all the examples in the node are the same class (e.g., they are all 
+poisonous mushrooms or they are all edible mushrooms) 
+	or there are no attribute-value pairs left to split on, this way we will 
+have the decision tree completed. Then our program 
+	reads the testing data from the specified input file into a	linked list 
+in the root node and filter down testing data to the
+	leaf nodes and since each leaf node has stored (from the training data) 
+the class of the examples that should be there. we can
+	calcuate the number and percentage of correctly classified examples of 
+each class, and the overall percentage of correctly classified
+	examples.
+
  
- Notes:
- run this program with the file mushrooms.data. You can pick the output file
- name. Some functions are from program P4.c.
  
  Data Structures:
- This program stores information about mushrooms in a linked list of
- structures. Each structure contains information about the Mushroom's number, 
- attribures, and a a pointer to the next structure.
+	This program has three structures, one to store information about each 
+mushroom and a pointer to next mushroom, second to store information
+	about each attribute and also a pointer to next attribute, the last one 
+a structure which is used as decision tree node. We have two linked 
+	lists of mashrooms and thier attributes and a decision tree.
  ******************************************************************************/
  
 /*****************************************************************************/
@@ -123,7 +142,7 @@ int main(int argc, char* argv[]) {
   nonClassAvailableValues = NULL;
   valueIterate = NULL;
 
-  printf( "This program processes data about the attributes mushrooms.\n" );
+  printf( "This program processes data about the attributes.\n" );
   
   /* initialize filenames to dummy strings */
   strcpy( infilenameTraining, "none" );
