@@ -1,0 +1,136 @@
+------------------------------------------------------------------------
+File: 0.OUTLINE.CBC
+Notes from Clare on Genesis source files
+------------------------------------------------------------------------
+Outline of important data structures in Genesis
+
+Old, New  
+  arrays to hold the populations (arrays of STRUCTURES)
+    Old is what we might think of as the "current population"
+    New is first the parents, which then get altered into the offspring, and
+	then copied over to Old at the end of the generation
+STRUCTURE contains
+  a string of characters (to hold the solution)
+  a double               (to hold the fitness)
+  an int                 (a flag to know whether the fitness function needs to
+                          be called)
+The bitstring is "packed" into the array of characters to save space
+(so that 8 bits can be stored in each character)
+Functions to pack and unpack the array are in convert.c
+------------------------------------------------------------------------
+Outline of important variables in Genesis
+
+Totalexperiments
+  Remember that we want to repeat our GA run some number of times
+  This specifies how many times to repeat (e.g., 1 when you're developing;
+  maybe 100 when you're actually running)
+Totaltrials
+  Instead of counting generations to determine when to stop, Genesis counts
+  how many times it has called the fitness function. (Each call is a "trial")
+Gen
+  The current generation number
+Trials
+  The current trial number
+Popsize
+  The number of individuals in the population
+Length
+  The length (in bits) of strings in the population
+C_rate
+  The crossover rate -- the percentage of the population that is crossed over
+  range: [0..1.0]
+M_rate
+  The mutation rate -- the probability of mutating each bit 
+  range: [0..1.0]
+
+These variables (and more) are set via the in.XXX file, which is read in when
+you run Genesis.
+------------------------------------------------------------------------
+Outline of important functions in Genesis
+
+main
+  loop through specified number of experiments   (Totalexperiments)
+    loop through specified number of generations (cf. Totaltrials)
+      Generate -- do one generation
+
+Generate (one generation)
+  if generation 0, initialize population
+  select parents       (copy parents from Old into New array)
+  mutate parents      
+  crossover parents
+  evaluate the parents (call the fitness function)
+  swap Old and New arrays  (New array becomes Old)
+------------------------------------------------------------------------
+Outline of Genesis source files (comments/descriptions are taken from files)
+
+best.c
+   purpose:    input, maintenance and output of best structures
+checkpnt.c
+   purpose:    save global variables in a file for later restart
+convert.c
+   purpose:    functions that translate between various representations
+cross.c
+   purpose:    perform two-point crossover on entire population
+display.c
+   purpose:    manages the display for interactive use
+done.c
+   purpose:    test experiment-termination conditions.
+elitist.c
+   purpose:    The elitist policy stipulates that the best individual
+               always survives into the new generation.  The elite
+               individual is placed in the last position in New pop,
+               and is not changed through crossover or mutation.
+error.c
+   purpose:    print message in error log file and abort.
+evaluate.c
+   purpose:    evaluate the current population by
+               calling the user-defined function "eval"
+generate.c
+   purpose:    One generation consists of
+                 (1) forming a new population of structures.
+                 (2) evaluating the population.
+                 (3) gathering performance statistics.
+init.c
+   purpose:    create an initial population of structures,
+               and initalize some performance variables.
+               This is called at the start of each experiment.
+input.c
+   purpose:    Set up filenames and read the input files, and
+               initialize variables for this run.
+               See init.c for the initialization of variables for each
+               experiment.
+main.c
+   purpose:    main program for Genesis.
+measure.c
+   purpose:    calculate performance measures and append them
+               to the output file.
+mutate.c
+   purpose:    Perform mutation on the current population.
+restart.c
+   purpose:    restart an interupted GA run.
+schema.c
+   purpose:    measure the current allocation of trials to a schema
+               and record the results in Schemafile.
+select.c
+   purpose:    choose a new population
+
+define.h
+   purpose:    global definitions for Genesis
+extern.h
+   purpose:    external declarations for Genesis.
+format.h
+   purpose:    specify the formats for the input and output files
+global.h
+   purpose:    global variables for Genesis.
+------------------------------------------------------------------------
+Auxiliary programs/files
+report.c
+   purpose:    generate a report summarizing the mean and variance of a number
+               of performance measures of a GA run.
+setup.c
+   purpose:    create an input file for Genesis.
+               Default values for input parameters are provided
+               when the user gives a null response to a prompt.
+------------------------------------------------------------------------
+Note: this version changed to run on USM Linux cluster
+  including getting rid of curses and interactive mode
+------------------------------------------------------------------------

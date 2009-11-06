@@ -1,0 +1,16 @@
+       Experiments = 1
+      Total Trials = 100
+   Population Size = 50
+  Structure Length = 30
+    Crossover Rate = 0.6
+     Mutation Rate = 0.001
+    Generation Gap = 1.0
+    Scaling Window = 5
+   Report Interval = 20000
+  Structures Saved = 5
+ Max Gens w/o Eval = 2
+     Dump Interval = 0
+       Dumps Saved = 0
+           Options = CefgL
+       Random Seed = 123456789
+          Rank Min = 0.75

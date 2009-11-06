@@ -1,0 +1,919 @@
+
+
+
+
+		       A User's Guide to GENESIS
+			      Version 5.0
+
+			  JOHN J. GREFENSTETTE
+			      October 1990
+
+	       Copyright (c) 1990 by John J. Grefenstette
+
+
+ABSTRACT
+
+This document describes the GENESIS system for function optimization
+based on genetic search techniques.  Genetic algorithms appear to hold a
+lot of promise as general purpose adaptive search procedures.  However,
+the author disclaims any warranties of fitness for any particular
+problem.  The purpose of making this system available is to encourage
+the experimental use of genetic algorithms on realistic optimization
+problems, and thereby to identify the strengths and weaknesses of
+genetic algorithms.  Comments and bug reports are also welcome.
+
+
+1. INTRODUCTION
+
+This document describes the GENEtic Search Implementation System
+(GENESIS Version 5.0).  This system was written to promote the study of
+genetic algorithms for function minimization.  Since genetic algorithms
+are task independent optimizers, the user must provide only an
+"evaluation" function which returns a value when given a particular
+point in the search space.  The system is written in the language C.
+Details concerning the interface between the user-written function and
+GENESIS are explained below.  Makefiles are provided to ease the
+construction of genetic algorithms for the user's application.
+
+This version offers several enhancements over previous versions that
+should make the system much more user friendly.  The major improvement
+is a user-level representation that allows the user to think about the
+genetic structures as vectors of real numbers, rather than bit strings. 
+This level of representation should make the application of GENESIS to
+new problems easier than ever.  A number of new options have been added,
+including: a display mode that includes an interactive user interface,
+the option to maximize or minimize the objective function, the choice of
+rank-based or proportional selection algorithm, and an option to use a
+Gray code as a transparent lower level representation. 
+
+The remainder of this section provides a general overview of genetic
+algorithms (GA's).  For more detailed discussions, see [5,7].  GA's are
+iterative procedures which maintain a "population" of candidate
+solutions to the objective function f(x):
+
+
+		   P(t) = <x1(t), x2(t), ... , xN(t)>
+
+Each structure xi in population P is simply a binary string of length L. 
+Generally, each xi represents a vector of parameters to the function
+f(x), but the semantics associated with the vector is unknown to the GA. 
+During each iteration step, called a "generation", the current
+population is evaluated, and, on the basis of that evaluation, a new
+population of candidate solutions is formed.  A general sketch of the
+procedure appears in Figure 1. 
+
+
+	procedure GA
+	begin
+		t = 0;
+		initialize P(t);
+		evaluate structures in P(t);
+		while termination condition not satisfied do
+		begin
+			t = t + 1;
+			select P(t) from P(t-1);
+			recombine structures in P(t);
+			evaluate structures in P(t);
+		end
+	 end.
+
+		     Figure 1.  A Genetic Algorithm
+
+
+The initial population P(0) is usually chosen at random.  Alternately,
+the initial population may contain heuristically chosen initial points. 
+In either case, the initial population should contain a wide variety of
+structures.  Each structure in P(0) is then evaluated.  For example, if
+we are trying to minimize a function f, evaluation might consist of
+computing and storing f(x1), ...  , f(xN). 
+
+The structures of the population P(t+1) are chosen from the population
+P(t) by a randomized "selection procedure" that ensures that the
+expected number of times a structure is chosen is proportional to that
+structure's performance, relative to the rest of the population.  That
+is, if xj has twice the average performance of all the structures in
+P(t), then xj is expected to appear twice in population P(t+1).  At the
+end of the selection procedure, population P(t+1) contains exact
+duplicates of the selected structures in population P(t). 
+
+In order to search other points in the search space, some variation is
+introduced into the new population by means of idealized "genetic
+recombination operators." The most important recombination operator is
+called "crossover".  Under the crossover operator, two structures in the
+new population exchange portions of their binary representations.  This
+can be implemented by choosing a point at random, called the crossover
+point, and exchanging the segments to the right of this point.  For
+example, let
+
+	x1 = 100:01010, and
+
+	x2 = 010:10100.
+
+and suppose that the crossover point has been chosen as indicated.  The
+resulting structures would be
+
+	y1 = 100:10100    and
+
+	y2 = 010:01010.
+
+Crossover serves two complementary search functions.  First, it provides
+new points for further testing within the schemas already present in
+the population.  In the above example, both x1 and y1 are
+representatives of the schema 100#####, where the # means "don't care". 
+Thus, by evaluating y1, the GA gathers further information about this
+schema.  Second, crossover introduces representatives of new schemas
+into the population.  In the above example, y2 is a representative of
+the schema #1001###, which is not represented by either "parent".  If
+this schema represents a high-performance area of the search space, the
+evaluation of y2 will lead to further exploration in this part of the
+search space. 
+
+Termination may be triggered by finding an acceptable approximate
+solution to f(x), by fixing the total number of evaluations, or some
+other application dependent criterion. 
+
+The basic concepts of GA's were developed by Holland [7] and his
+students [2,4,6,8].  Theoretical considerations concerning the
+allocation of trials to schemas [4,7] show that genetic techniques
+provide a highly efficient heuristic for information gathering in
+complex search spaces.  A number of experimental studies [2,3,4] have
+shown that GA's exhibit impressive efficiency in practice.  While
+classical gradient search techniques are more efficient for problems
+which satisfy tight constraints (e.g., continuity, low dimensionality,
+unimodality, etc.), GA's consistently outperform both gradient
+techniques and various forms of random search on more difficult (and
+more common) problems, such as optimizations involving discontinuous,
+noisy, high dimensional, and multimodal objective functions.  GA's have
+been applied to various domains, including numerical function
+optimization [2,3], adaptive control system design [5], and artificial
+intelligence task domains [9].  The next section discusses each of the
+major modules of this implementation in greater detail. 
+
+
+2. MAJOR PROCEDURES
+
+This section describes some of the more important procedures in the
+GENESIS system.  For full details, see the actual source code. 
+
+Representation
+
+GENESIS has three levels of representation for the structures it is
+evolving.  The lowest level, or "packed" representation, is used to
+maximize both space and time efficiency in manipulating structures.  In
+general, this level of representation is transparent to the user.  The
+next level, or "string" representation, represents structures as
+null-terminated arrays of chars.  For example, the structure 00110011
+would be represented by the string "00110011".  This level is provided
+for users who wish to provide an arbitrary interpretation on the genetic
+structures, for example, non-numeric concepts.  The third level, or
+"floating point" representation, will be the appropriate level for many
+numeric optimization problems.  At this level, the user can think about
+the genetic structures as vectors of real numbers.  The user specifies
+the floating representation by interacting with the "setup" program (see
+below).  For each parameter, or "gene", the user specifies its range,
+its number of values, and its output format.  The system then
+automatically lays out the string representation, and translates between
+the user-level genes and the lower representation levels.
+
+In the following sections, the major modules are described in more
+detail.  The descriptions will be given at the string level
+representation, although in some cases, the actual operations take place
+at the packed level. 
+
+Initialization
+
+File "init.c" contains the initialization procedure, whose primary
+responsibility is to set up the initial population.  If you wish to
+"seed" the initial population with heuristically chosen structures, put
+the structures in a file called "init" (or "init.foo" if you are using
+file extensions (see below)), and use the "i" option (see "Options"). 
+The rest of the initial population is filled with random structures.  If
+the "f" option is in effect ("floating point representation"), the
+structures in the init file must be specified as real numbers;
+otherwise, the init file must contain strings, one per line. 
+
+
+Generation
+
+As previously mentioned, one generation (see "generate.c") comprises the
+following steps: selection, mutation, crossover, evaluation, and some
+data collection procedures. 
+
+
+Selection
+
+Selection is the process of choosing structures for the next generation
+from the structures in the current generation.  The default selection
+procedure (see file "select.c") is a stochastic procedure that
+guarantees that the number of offspring of any structure is bounded by
+the floor and by the ceiling of the (real-valued) expected number of
+offspring.  This procedure is based on an algorithm by James Baker.  The
+idea is to allocate to each structure a portion of a spinning wheel
+proportional to the structure's relative fitness.  A single spin of the
+wheel determines the number of offspring assigned to every structure. 
+This algorithm is compared to other selection methods in [1].  The
+selection pointers are then randomly shuffled, and the selected
+structures are copied into the new population. 
+
+If the "R" option is in effect, selection is based on a Ranking
+algorithm: the probability of selecting a structure is proportional to
+its index in the population, where the index of the best structure is
+Popsize-1, and the index of the worst structure is 0.  Ranking helps
+prevent premature convergence by preventing "super" individuals from
+taking over the population within a few generations.  However, ranking
+often produces slower improvement than proportional selection. 
+
+
+Mutation
+
+After the new population has been selected, mutation is applied to each
+structure in the new population.  (See "mutate.c".) Each position is
+given a chance (=M_rate) of undergoing mutation.  This is implemented by
+computing an interarrival interval between mutations, assuming a
+mutation rate of M_rate.  If mutation does occur, a random value is
+chosen from {0,1} for that position.  If the mutated structure differs
+from the original structure, the structure is marked for evaluation. 
+
+
+Crossover
+
+Crossover (see "cross.c") exchanges alleles among adjacent pairs of the
+first (C_rate*Popsize) structures in the new population.  (Recall that
+the population is randomly shuffled in the selection procedure.)
+Crossover can be implemented in a variety of ways, but there are
+theoretical advantages to treating the structures as rings, choosing two
+crossover points, and exchanging the sections between these points [4]. 
+The segments between the crossover points are exchanged, provided that
+the parents differ somewhere outside of the crossed segment.  If, after
+crossover, the offspring are different from the parents, then the
+offspring replace the parents, and are marked for evaluation. 
+
+
+
+3. EVALUATION PROCEDURE
+
+To use GENESIS, the user must write an evaluation procedure, which takes
+one structure as input and returns a double precision value.  The
+procedure must be declared in the user's file as follows:
+
+
+	double eval(str, length, vect, genes)
+	char str[];
+	int length;
+	double vect[];
+	int genes;
+
+
+where "str" is string representation of the structure, "length" is the
+length of "str", "vect" is the floating point representation (if option
+"f" is set), and "genes" is the length of "vect".  The body of the
+evaluation function is of course application dependent.  Figure 2 shows
+a sample evaluation function.
+
+
+/************************************************  file f1.c  ****/
+
+double eval(str, length, vect, genes)
+char str[];      /* string representation                        */
+int length;      /* length of bit string                         */
+double vect[];   /* floating point representation                */
+int genes;       /* number of elements in vect                   */
+{
+	register int i;
+	double sum;
+
+	sum = 0.0;
+	for (i = 0; i < genes; i++)
+		sum += vect[i] * vect[i];
+
+	return (sum);
+}
+
+/************************************************ end of file ****/
+
+	    Figure 2: An evaluation function for a parabola.
+
+
+Figure 3 shows an evaluation function that counts the number of 0's
+in the string representation.
+
+
+/************************************************  file f6.c  ****/
+
+double eval(str, length, vect, genes)
+char str[];      /* string representation                        */
+int length;      /* length of bit string                         */
+double vect[];   /* floating point representation                */
+int genes;       /* number of elements in vect                   */
+{
+	register int i;
+	double sum;
+
+	sum = 0.0;
+	for (i = 0; i < length; i++)
+		sum += (str[i] == '0');
+
+	return (sum);
+}
+
+/************************************************ end of file ****/
+
+
+	   Figure 3: An evaluation function for counting 0's.
+
+
+These and other commonly used test functions are provided in
+the test.fns directory.
+
+
+
+4. INSTALLING GENESIS
+
+GENESIS should run on most machines with a C compiler.  This version has
+run successfully on both Sun workstations and IBM PC's (using Turbo C). 
+This section will address these systems.  The code has been designed to
+be portable, but minor changes may be necessary for other systems. 
+
+It is advisable to create a new directory, say /usr/yourname/genesis,
+and copy the files from the distribution diskette into this directory. 
+The distribution also includes a subdirectory called test.fns with some
+sample evaluation functions. 
+
+1) In the file "define.h", set exactly one of the compiler constants
+UNIX or TURBOC to 1, as appropriate for your system.  Use UNIX for 32
+bit UNIX compatible systems; use TURBOC for Turbo C on DOS machines. 
+
+2) Copy either "makefile.unx" or makefile.dos" to Makefile, as appropriate.
+
+3) To compile the system, use the make(I) command:
+
+
+   % make install
+
+
+This should compile the programs "setup", "report" and an executable
+"ga.exe" on DOS or a random archive library "ga.a" under UNIX. 
+
+
+
+5. RUNNING THE PROGRAMS
+
+Before running the GA, execute the "setup" program, which prompts you
+for a number of input parameters.  All of this information is stored in
+files for future use, so you may only need to run "setup" once.  A
+<return> response to any prompt gets the default value shown in
+brackets.  The prompts are as follows:
+
+-- the suffix for file names []:
+
+If a string is entered, say "foo", then the files for this run will have
+names like "in.foo", "out.foo", "log.foo", etc.  Otherwise, the file
+names are "in", "out", "log", etc. 
+
+-- Floating point representation [y]:
+
+Unless this is declined, the user will be asked the specify the
+
+-- number of genes:
+
+Each gene will take on a range of floating point values, with a
+user-defined granularity and output format.  The user will be asked to
+specify for each gene: its minimum value; its maximum value; the
+number of values (must be a positive power of 2); the desired output
+format for this gene (using printf format, e.g., %7.2f).  The user may
+also specify a repetition count, meaning that there a number of genes
+with the same range, granularity, and output format.  When all genes
+have been specified, the information is stored in the "template" file,
+and Setup prompts for:
+
+-- the number of experiments [1]:
+
+This is the number of independent optimizations of the same function.
+
+-- the number of trials per experiment [1000]:
+
+-- the population size [50]:
+
+-- the length of the structures in bits [30]:
+
+If the "f" option is selected, this number will computed automatically from the
+information collected above.
+
+-- the crossover rate [0.60]:
+
+-- the mutation rate [0.001]:
+
+-- the generation gap [1.0]:
+
+The generation gap indicates the fraction of the population which is
+replaced in each generation. 
+
+-- the scaling window [5]:
+
+When minimizing a numerical function with a GA, it is common to define
+the performance value u(x) of a structure x as u(x) = f_max - f(x),
+where f_max is the maximum value that f(x) can assume in the given
+search space.  This transformation guarantees that the performance u(x)
+is positive, regardless of the characteristics of f(x).  Often, f_max is
+not available a priori, in which case we may define u(x) = f(x_max) -
+f(x), where f(x_max) is the maximum value of any structure evaluated so
+far.  Either definition of u(x) has the unfortunate effect of making
+good values of x hard to distinguish.  For example, suppose f_max = 100. 
+After several generations, the current population might contain only
+structures x for which 5 < f(x) < 10.  At this point, no structure in
+the population has a performance which deviates much from the average. 
+This reduces the selection pressure toward the better structures, and
+the search stagnates.  One solution is to define a new parameter F_max
+with a value of, say, 15, and rate each structure against this standard. 
+For example, if f(xi) = 5 and f(xj) = 10, then u(xi) = F_max - f(xi) =
+10, and u(xj) = F_max - f(xj) = 5; the performance of xi now appears to
+be twice as good as the performance of xj.  The scaling window W allows
+the user to control how often the baseline performance is updated.  If W
+> 0 then the system sets F_max to the greatest value of f(x) which has
+occurred in the last W generations.  A value of W = 0 indicates an
+infinite window (i.e.  u(x) = f(x_max) -f(x)). 
+
+-- the number of trials between data collections [100]:
+
+-- how many of the best structures should be saved [10]:
+
+-- how many consecutive generations are permitted without any
+evaluations occurring [2]:
+
+-- the number of generations between dumps [0]:
+
+0 indicates no dumps will occur.
+
+-- the number of dumps that should be saved [0]:
+
+-- the options (see below) [cefgl]:
+
+-- the seed for the random number generator [123456789]:
+
+--  Rank_Min [0.75]:
+
+This is the minimum expected number of offspring for ranking (used only
+if option "R" is set).  The Ranking selection algorithm used here is a
+linear mapping under which the worst structure is assigned Rank_Min
+offspring and the best is assigned (2 - Rank_Min). 
+
+Setup then echoes the input file, and exits.  The setup program should
+be run at least once for each new evaluation function, but after that,
+it may be more convenient to simply edit the input file to make minor
+changes to the parameters.
+
+
+
+Running GENESIS under UNIX
+
+The UNIX Makefile produces a random archive called ga.a that can be
+linked to the user's evaluation function.  Suppose the new evaluation
+function is in file f7.c.  Then the following command will create an
+executable called "ga.f7":
+
+
+   % make f=f7 ga.f7
+
+
+To make things easier, a shell script called "go" is provided.  This
+command takes two arguments: the first is the root name of the source
+file containing the evaluation function; the second is an optional file
+suffix (as discussed under setup above).  The command:
+
+
+   % go f7 x1
+
+
+will compile the user's evaluation function, link it with the GENESIS
+random archive, run the program using the in.x1 (and template.x1) input
+files, and produce a report in file rep.x1.  The report is discussed
+below. 
+
+GENESIS was designed to encourage experiments with genetic algorithms. 
+It is relatively easy for the user to create variations of GENESIS. 
+Suppose for example that you wish to test a new crossover operator. 
+Simply create a file called, say, "mycross.c" which contains a function
+called "crossover()".  This file should "#include extern.h", in order to
+access global variables (see cross.c).  Now, modify the Makefile so that
+the loader gets your function instead of the crossover provided, i.e.,
+
+
+   cc $(CFLAGS) -o ga.$f $f.o mycross.o ga.a -lm -lcurses -ltermlib
+
+
+No recompilation of GENESIS itself is necessary.
+
+In order to facilitate such experimentation, most of the important
+variables in GENESIS are global.  All global identifiers in GENESIS
+begin with a capital letter, to minimize conflicts with user-defined
+global identifiers. 
+
+
+
+Running GENESIS under DOS
+
+The DOS version of GENESIS assumes a more rudimentary MAKE facility.  To
+change the objective function, edit eval.c to compute the desired
+evaluation, and recompile with the command:
+
+   C:> MAKE
+
+Execute the program by running GA.EXE:
+
+   C:> GA
+
+with an optional command line argument.  This approach can also be used
+to change other functions in GENESIS.  There is also a file GO.BAT
+provided that will compile, run and generate a report. 
+
+
+
+6. FILES
+
+"ckpt" - a checkpoint file containing a snapshot of important variables,
+and the current population.  This file is produced if either the "d"
+option is set or both the number of saved dumps and the dump interval
+are positive.  This file is necessary for the restart option "r" to
+work.  It is also sometimes interesting in its own right. 
+
+"dump.<n>" - intermediate checkpoint files produced when the number of
+saved dumps is greater than 1 and the dump interval is positive.  "ckpt"
+is always identical to the latest dump. 
+
+"in" - contains input parameters and initial random number seeds.  This
+file is required. 
+
+"init" - contains structures to be included in the initial population. 
+This is useful if you have heuristics for selecting plausible starting
+structures.  This file is read iff the option "i" is set. 
+
+"log" - logs the dates of starts and restarts.  This file is produced if
+the "l" option is set. 
+
+"log.error" - logs error messages that precede aborting the program.
+Check here first when problems occur.
+
+"min" - contains the best structures found by the GA.  The number of
+elements in "min" is indicated by the response to the "save how many"
+prompt during setup.  If the number of experiments is greater than one,
+the best structures are stored in "min.n" during experiment number n. 
+This file is produced if the number of saved structures is positive. 
+
+"out"- contains data describing the performance of the GA.  This file is
+produced if option "c" is set. 
+
+"rep" - summarizes the performance of the algorithm.  This file is
+produced by the report program from the "out" file. 
+
+"schema" - logs a history of a single schema.  This file is required for
+the "s" option. 
+
+"template" - describes the floating point representation, defined during
+interaction with the setup program.  This file is required for the "f"
+option.  This file probably should not be edited by hand, unless all
+changes are properly reflected in the Length line of the "in" file.
+
+If you gave a non-null response, say "foo", to the first prompt from
+"setup", then all of the above files (except "dump" and "log.error")
+will have the given extension, e.g., "in.foo", "out.foo", etc. 
+
+
+
+7. OPTIONS
+
+GENESIS allows a number of options which control the kinds of output
+produced, as well as certain strategies employed during the search. 
+Each option is associated with a single character.  The options are
+indicated by responding to the "options" prompt with a string containing
+the appropriate characters.  If no options are desired, respond to the
+prompt by typing ".".  Options may be indicated in any order.  All
+options may be invoked independently, except as noted below.
+
+"a": evaluate all structures in each generation.  This may be useful
+when evaluating a noisy function, since it allows the GA to sample a
+given structure several times.  If this option is not selected then
+structures which are identical to parents are not evaluated. 
+
+"b": at the end of the experiments, write the average best value (taken
+over all experiments) to the standard output. 
+
+"c": collect statistics concerning the convergence of the algorithm. 
+These statistics are written to the "out" file, after every "report
+interval" trials.  The intervals are approximate, since statistics are
+collected only at the end of a generation.  Option "c" implies option
+"C".  Option "c" is expensive relative to option "C". 
+
+"C": collect statistics concerning the performance of the algorithm. 
+These statistics are written to the "out" file, after every "report
+interval" trials.  The intervals are approximate, since statistics are
+collected only at the end of a generation.  This information is also
+printed on the screen under the "D" and "I" options. 
+
+"d": dump the current population to "ckpt" file AFTER EACH EVALUATION. 
+WARNING: This may considerably slow down the program.  This may be
+useful when each evaluation represents a significant amount of
+computation. 
+
+"D": display mode.  Performance statistics are printed to the screen
+after each generation. 
+
+"e": use the "elitist" selection strategy.  The elitist strategy
+stipulates that the best performing structure always survives intact
+from one generation to the next.  In the absence of this strategy, it is
+possible that the best structure disappears, thanks to crossover or
+mutation. 
+
+"f": use the floating point representation specified in the template
+file.  If set, structure in the init file (option "i") must be specified
+in floating point, structures in the min file will be printed in
+floating point, and the ckpt file will also show the interpreted genes
+(in addition to the string representation).
+
+"g": use Gray code.  A Gray code is sometimes useful in representing
+integers in genetic algorithms.  Gray codes have the property that
+adjacent integer values differ at exactly one bit position.  The use of
+Gray codes avoid unfortunate effects of "Hamming cliffs" in which
+adjacent values, say 31 and 32, differ in every position of their fixed
+point binary representations (01111 and 10000, respectively).  This
+option has no effect unless option "f" is also set. 
+
+"i": read structures into the initial population.  The initial
+population will be read from the "init" file.  If the file contains
+fewer structures than the population needs, the remaining structures
+will be initialized randomly.  Note: it is good practice to allow at
+least some randomness in the initial population. 
+
+"I": interactive mode.  Display mode is enabled, and statistics are
+printed to the screen after each generation.  In addition, the user is
+prompted for command to control the operation of the genetic algorithm. 
+
+"l": log activity (starts and restarts) in the "log" file.  Some error
+messages also end up in the "log" file. 
+
+"L": dump the last generation to the "ckpt" file.  This allows the user
+to restart the experiment at a later time, using option "r". 
+
+"M": maximize the evaluation function.  The default is to minimize the
+evaluation function. 
+
+"o": at the end of the experiments, write the average online performance
+measure to the standard output.  Online performance is the average of
+all evaluations during the experiment. 
+
+"O": at the end of the experiments, write the average Offline
+performance measure to the standard output.  Offline performance is the
+average of the best current values. 
+
+"r": restart a previously interrupted execution.  In this case, the
+"ckpt" file is read back in, and the GA takes up where it left off. 
+
+"R": Rank based selection.
+
+"s": trace the history of one schema.  This option requires that a file
+named "schema" exists in which the first line contains a string which has
+the length of one structure and which contains only the characters "0",
+"1", and "#" (and no blanks).  The system will append one line to the
+schema file after each generation describing the performance
+characteristics of the indicated schema (number of representatives,
+relative fitness, etc.).  The lines are also printed on screen under "D"
+and "I" options. 
+
+"t": trace each major function call.  (FOR DEBUGGING.) Tracing
+statements are written to the standard output. 
+
+
+
+8. THE REPORT
+
+If the "c" or "C" option is selected, a report describing the
+performance of the GA can be produced by the "report" program.  Run
+"report" with the same command line argument used for running the GA. 
+For example:
+
+
+   % ga.foo foo
+
+
+   % report foo > rep.foo
+
+The report summarizes the mean, variance and range of several
+measurements, including online performance, offline performance, the
+average performance of the current population, and the current best
+value.  Online performance is the mean of all evaluations.  Offline
+performance is the mean of the current best evaluations.  See [5].  If
+option "c" is selected, three additional measures concerning the
+convergence of the GA are printed: "Conv" indicates the number of
+positions in which at least 95% of the population has the same value. 
+"Lost" indicates the number of positions in which 100% of the population
+has the same value.  "Bias" indicates the average percentage of the most
+prominent value in each position.  That is, a bias of 0.75 means that,
+on average, each position has converged to 75% 0's or 75% 1's.  The
+minimum bias is 0.50. 
+
+
+
+9. EXAMPLE
+
+Figure 2 shows an example of a user-defined evaluation for the following
+problem:
+
+Min f(x) =  sum [(xi)^2], where  -5.12 <= xi <= 5.11, i=1,2,3.
+
+Each xi is represented by 10 bits, so that the structure length is 30,
+and the granularity for each xi is 0.01.  The minimum occurs at the
+origin.  (Of course, this problem does not require the full power of
+genetic algorithms and can be more appropriately solved using classical
+optimization techniques.)
+
+   % setup
+
+   File suffix []: ex1
+   Floating point representation [y]:
+   genes: 3
+   gene 0:
+   min: -5.12
+   max: 5.11
+   values (must be a power of 2): 1024
+   format: %7.2f
+   repetition: 3
+
+   Experiment [1]:
+   Trials [1000]:
+   Pop Size [50]:
+   Length [30]:
+   Crossover Rate [0.6]:
+   Mutation Rate [0.001]:
+   Generation Gap [1.0]:
+   Windowsize [5]:
+   Report Interval [100]: 200
+   Structures Saved [10]: 5
+   Max Gens w/o Eval [2]:
+   Dump Interval [0]:
+   Dumps Saved [0]:
+   Options [cefgl]: acefgL
+   Random Seed: [123456789]:
+   Rank Min [0.75]:
+
+
+The input file "in.ex1" is created and echoed to the terminal:
+
+
+       Experiments = 1
+      Total Trials = 1000
+   Population Size = 50
+  Structure Length = 30
+    Crossover Rate = 0.6
+     Mutation Rate = 0.001
+    Generation Gap = 1.0
+    Scaling Window = 5
+   Report Interval = 200
+  Structures Saved = 5
+ Max Gens w/o Eval = 2
+     Dump Interval = 0
+       Dumps Saved = 0
+           Options = acefgL
+       Random Seed = 123456789
+          Rank Min = 0.75
+
+
+The file "template.ex1" is created:
+
+
+   genes: 3
+
+   gene 0
+   min: -5.12
+   max: 5.11
+   values: 1024
+   format: %7.2f
+
+   gene 1
+   min: -5.12
+   max: 5.11
+   values: 1024
+   format: %7.2f
+
+   gene 2
+   min: -5.12
+   max: 5.11
+   values: 1024
+   format: %7.2f
+
+
+Now execute the shell script:
+
+
+  % go f1 ex1
+
+
+This executes the commands:
+
+
+  make f=f1 ga.f1
+  ga.f1 exp1
+  report f1 > rep.ex1
+
+
+The program ga.f1 executes.  The raw output data is sent to file
+"out.ex1", and the values of the global variables, including the final
+population, are sent to "ckpt.ex1." The report generator produces file
+"rep.ex1":
+
+rep.ex1 for ga.f1
+Tue Oct  9 23:10:25 EDT 1990
+ 
+      Experiments = 1
+     Total Trials = 1000
+  Population Size = 50
+ Structure Length = 30
+   Crossover Rate = 0.600
+    Mutation Rate = 0.001
+   Generation Gap = 1.000
+   Scaling Window = 5
+  Report Interval = 200
+ Structures Saved = 5
+Max Gens w/o Eval = 2
+    Dump Interval = 0
+      Dumps Saved = 0
+          Options = acefgL
+      Random Seed = 123456789
+         Rank Min = 0.750
+
+MEAN
+Gens  Trials  Lost  Conv   Bias    Online    Offline      Best     Average
+   0      50     0     0  0.569  2.622e+01  5.271e+00  2.795e+00  2.622e+01
+   3     200     0     0  0.617  1.951e+01  2.859e+00  7.049e-01  1.518e+01
+   7     400     0     0  0.690  1.467e+01  1.633e+00  3.097e-01  7.546e+00
+  11     600     1     2  0.723  1.146e+01  1.185e+00  2.485e-01  3.514e+00
+  15     800     2     5  0.742  9.329e+00  9.362e-01  1.861e-01  2.665e+00
+  19    1000     3     5  0.753  7.860e+00  7.837e-01  1.202e-01  1.791e+00
+
+
+
+The 5 best structures are saved in file "min.ex1":
+
+
+   % cat min.ex1
+
+  -0.29   0.19   0.00   1.2020e-01    19   972
+   0.36   0.14   0.17   1.7810e-01    18   921
+  -0.30  -0.31   0.00   1.8610e-01    12   617
+   0.32   0.29   0.00   1.8650e-01    18   902
+  -0.29   0.30   0.00   1.7410e-01    18   923
+
+Each line of the minfile displays one structure, its evaluation, and the
+generation and trial counters at the time of the first occurrence of
+this structure. 
+
+If it is desired to continue this experiment, edit the input file
+"in.ex1" to increase the total number of trials and to add "r" to the
+options.  Then issue the command:
+
+   % go f1 ex1
+
+
+
+ACKNOWLEDGMENTS
+
+The author wishes to thank the many users of GENESIS for their
+suggestions and comments.  Further suggestions and comments are
+solicited.  Of course, the responsibility for any remaining errors is
+mine. 
+
+
+REFERENCES
+
+1. James E. Baker, "Reducing bias and inefficiency in the selection
+algorithm," in Genetic Algorithms and Their Applications: Proc. 2nd
+Intl. Conf., ed. J. J. Grefenstette, pp. 14-21, LEA, Cambridge,
+MA, July 1987. 
+
+2. A. D. Bethke, Genetic algorithms as function optimizers, Ph. D. 
+Thesis, Dept. Computer and Communication Sciences, Univ. of Michigan,
+1981. 
+
+3. A. Brindle, Genetic algorithms for function optimization, Ph. D. 
+Thesis, Computer Science Dept., Univ. of Alberta, 1981. 
+
+4. K. A. DeJong, Analysis of the behavior of a class of genetic
+adaptive systems, Ph. D. Thesis, Dept. Computer and Communication
+Sciences, Univ. of Michigan, 1975. 
+
+5. K. A. DeJong, "Adaptive system design: a genetic approach," IEEE
+Trans. Syst., Man, and Cyber., vol. SMC-10, no. 9, pp. 566-574,
+Sept. 1980. 
+
+6. D. R. Frantz, Non-linearities in genetic adaptive search, Ph. D. 
+Thesis, Dept. Computer and Communication Sciences, Univ. of Michigan,
+1972. 
+
+7. J. H. Holland, Adaptation in Natural and Artificial Systems, Univ. 
+Michigan Press, Ann Arbor, 1975. 
+
+8. R. B. Hollstien, Artificial genetic adaptation in computer control
+systems, Ph. D. Thesis, Dept. Computer and Communication Sciences,
+Univ. of Michigan, 1971. 
+
+9. S. F. Smith, "Flexible learning of problem solving heuristics
+through adaptive search," Proc. 8th Intl. J. Conf. Artif. Intel. 
+(IJCAI), Aug. 1983. 

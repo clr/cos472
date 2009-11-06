@@ -1,0 +1,39 @@
+
+
+
+New best found in generation 0; Fitness is 1.00 (8 don't cares)
+Bits: 101010011111111000011011101010101111
+Genes: 13 15 11 12  2 14 13 13 11 
+
+New best found in generation 0; Fitness is 2.00 (7 don't cares)
+Bits: 111111101000000000011111100011101000
+Genes: 11 12 16  1  2 11 16 12 16 
+
+New best found in generation 0; Fitness is 3.00 (6 don't cares)
+Bits: 101100000000101110011000101010100000
+Genes: 14  1  1 14 15 16 13 13  1 
+
+New best found in generation 1; Fitness is 4.00 (5 don't cares)
+Bits: 111011101001101100011001001100000000
+Genes: 12 12 15 14  2 15  3  1  1 
+
+New best found in generation 1; Fitness is 5.00 (4 don't cares)
+Bits: 101100000000101011101010001100000000
+Genes: 14  1  1 13 12 13  3  1  1 
+
+New best found in generation 2; Fitness is 6.00 (3 don't cares)
+Bits: 111100000000000000011111100000000000
+Genes: 11  1  1  1  2 11 16  1  1 
+
+New best found in generation 3; Fitness is 7.00 (2 don't cares)
+Bits: 101100000000000000011110001100000000
+Genes: 14  1  1  1  2 12  3  1  1 
+
+New best found in generation 7; Fitness is 8.00 (1 don't cares)
+Bits: 011000000000000000011111001100000000
+Genes:  5  1  1  1  2 11  3  1  1 
+
+New best found in generation 13; Fitness is 9.00 (0 don't cares)
+Bits: 011000000000000000010000001100000000
+Genes:  5  1  1  1  2  1  3  1  1 
+

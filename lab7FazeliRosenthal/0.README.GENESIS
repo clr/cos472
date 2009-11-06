@@ -1,0 +1,21 @@
+****  README file for GENESIS ****
+
+This directory contains the GENESIS system, version 5.0.
+For instructions on installation and use, see the User's Guide.
+Produce the User's Guide by the command:
+
+% troff -ms genesis.doc
+
+or print the file genesis.txt.
+
+To build GENESIS under UNIX, issue the command:
+
+% make install
+
+See the User's Guide for further details.
+
+
+Two files added by Clare:
+  0.README.CBC  -- information on how to run Genesis
+  0.OUTLINE.CBC -- outline of important data structures, variables, 
+                   important functions, and source files

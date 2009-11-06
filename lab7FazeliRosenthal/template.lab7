@@ -1,0 +1,56 @@
+genes: 9
+
+gene 0
+min: 1
+max: 16
+values: 16
+format: %2.0f
+
+gene 1
+min: 1
+max: 16
+values: 16
+format: %2.0f
+
+gene 2
+min: 1
+max: 16
+values: 16
+format: %2.0f
+
+gene 3
+min: 1
+max: 16
+values: 16
+format: %2.0f
+
+gene 4
+min: 1
+max: 16
+values: 16
+format: %2.0f
+
+gene 5
+min: 1
+max: 16
+values: 16
+format: %2.0f
+
+gene 6
+min: 1
+max: 16
+values: 16
+format: %2.0f
+
+gene 7
+min: 1
+max: 16
+values: 16
+format: %2.0f
+
+gene 8
+min: 1
+max: 16
+values: 16
+format: %2.0f
+
